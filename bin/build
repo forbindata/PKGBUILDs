@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+# Arch Package Builder
+# 
+# Usage: bin/build [<package_name>, ...]
+# 
+# If you pass package names, it will look for specific packages on src
+# directory and will try to build them. Otherwise, it will build all packages
+# in that directory.
+#
+# Environment:
+#   (Required) REPO_NAME => The name of the repository file that you want to
+#     add your built packages to.
+
+main() {
+  # cd to root path
+  cd "$(dirname "$0")/.." || exit;
+
+  # Parameters
+  packages=$*
+
+  # This is the global var with the output variable. All built files are
+  # stored in this directory.
+  OUTPUT_PATH="$(pwd)/output"
+
+  if [ -z "$REPO_NAME" ]; then
+    error "Please, set the name of your repository with the var \$REPO_NAME"
+    exit 1
+  fi
+
+  if [ $# -eq 0 ]; then
+    build_multiple "$(ls -1 src)"
+  else
+    build_multiple "$packages"
+  fi
+}
+
+# Build multiple packages if you provide a list
+build_multiple() {
+  list=$*
+
+  for package in $list; do
+    build "$package"
+  done
+}
+
+# Build packages on `src` folder
+build() {
+  package=$1
+  pkg_path="src/$package"
+
+  if ! [ -d "$pkg_path" ]; then
+    error "Package $package is not found!"
+    exit 1
+  fi
+
+  # Set the output folder of the built package
+  export PKGDEST="$OUTPUT_PATH"
+
+  # Build the package
+  ( cd "$pkg_path" && \
+    makepkg --clean --syncdeps --needed --noconfirm )
+
+  # Get the name of the built package
+  pkg_file=$(cd "$pkg_path" && makepkg --packagelist)
+
+  # Then add this package to the repository
+  ( cd "$PKGDEST" && \
+    repo-add -n "$REPO_NAME.db.tar.gz" "${pkg_file#$PKGDEST/}" )
+}
+
+# Outputs an error message to the console
+error() {
+  bold=$(tput bold)
+  red=$(tput setaf 1)
+  normal=$(tput sgr0)
+  echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"
+}
+
+# shellcheck disable=SC2068
+main $@

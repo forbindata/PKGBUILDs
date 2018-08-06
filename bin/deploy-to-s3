@@ -1,0 +1,125 @@
+#!/bin/sh
+#
+# Package S3 uploader
+# 
+# Usage: bin/deploy-to-s3 [<package_name>, ...]
+# 
+# If you pass package names, it will look for specific packages on the output
+# directory and will try to build them. Otherwise, it will upload all packages
+# in that directory.
+#
+# Environment:
+#   (Optional) AWS_PROFILE => Set which AWS profile is going to be used to
+#     perform the S3 operations. This is recommended over using the access keys
+#     directly.
+#   (Optional) AWS_ACCESS_KEY_ID => If not using AWS profiles, this should
+#     point to the key created by IAM.
+#   (Optional) AWS_SECRET_ACCESS_KEY => If not using AWS profiles, this should
+#     be the access secret of your key.
+#   (Required) AWS_S3_BUCKET_NAME => The bucket name to which you want to push
+#     the packages to. Ensure that you have write access to it.
+#   (Required) REPO_NAME => The name of the repository file that you want to
+#     add your built packages to.
+
+main() {
+  # cd to root path
+  cd "$(dirname "$0")/.." || exit;
+
+  # Parameters
+  packages=$*
+
+  # This is the global var with the output variable. All uploaded files are
+  # relative to this directory.
+  OUTPUT_PATH="$(pwd)/output"
+
+  if [ -z "$AWS_S3_BUCKET_NAME" ]; then
+    error "Please, set the S3 Bucket using the variable \$AWS_S3_BUCKET_NAME"
+    exit 1
+  fi
+
+  if [ -z "$REPO_NAME" ]; then
+    error "Please, set the name of your repository with the var \$REPO_NAME"
+    exit 1
+  fi
+
+  if [ $# -eq 0 ]; then
+    upload_multiple_packages "$(ls -1 src)"
+  else
+    upload_multiple_packages "$packages"
+  fi
+}
+
+upload_multiple_packages() {
+  list=$*
+
+  for package in $list; do
+    upload_package "$package"
+  done
+
+  upload_repo_db
+}
+
+upload_package() {
+  package=$1
+
+  # Set the output folder of the built package
+  export PKGDEST="$OUTPUT_PATH"
+
+  # Get the name of the built package
+  built_pkg_file=$(cd "src/$package" && makepkg --packagelist)
+
+  if ! [ -f "$built_pkg_file" ]; then
+    error "The package '$package' is not built!"
+    exit 1
+  fi
+
+  # Upload it!
+  upload_file "${built_pkg_file#$PKGDEST/}"
+}
+
+upload_repo_db() {
+  files="$REPO_NAME.db $REPO_NAME.db.tar.gz $REPO_NAME.files $REPO_NAME.files.tar.gz"
+
+  for file in $files; do
+    upload_file "$file"
+  done
+}
+
+upload_file() {
+  file=$1
+
+  # Avoid re-uploading packages that are already there
+  s3_md5=$(aws s3api head-object --bucket "$AWS_S3_BUCKET_NAME" --key "$file" \
+    --query ETag --output text | grep --extended --only-match '[a-f0-9]{32}')
+
+  file_md5=$(md5sum "$OUTPUT_PATH/$file" | \
+    grep --extended --only-match '[a-f0-9]{32}')
+
+  if [ "$s3_md5" = "$file_md5" ]; then
+    warn "File '$file' already uploaded."
+    return
+  fi
+
+  aws s3 cp "$OUTPUT_PATH/$file" "s3://$AWS_S3_BUCKET_NAME/$file" > /dev/null
+  status=$?
+
+  if [ $status -eq 0 ]; then
+    success "File '$file' uploaded"
+  else
+    error "The file '$file' could not be uploaded."
+    exit 1
+  fi
+}
+
+# Print colorful notice messages to the console
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+orange=$(tput setaf 3)
+normal=$(tput sgr0)
+error() { echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"; }
+success() { echo "${bold}${green}==>${normal}${bold} ${*}${normal}"; }
+warn() { echo "${bold}${orange}==> WARNING:${normal}${bold} ${*}${normal}"; }
+
+# shellcheck disable=SC2068
+main $@
