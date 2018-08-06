@@ -1,0 +1,22 @@
+# Maintainer: Daniel Pereira <daniel@garajau.com.br>
+
+pkgname=ttf-emojione
+pkgver=3.1.2
+pkgrel=1
+pkgdesc="Official colorful EmojiOne font"
+url="https://github.com/emojione/emojione-assets"
+arch=(any)
+license=(custom)
+depends=('fontconfig')
+conflicts=('noto-fonts-emoji' 'ttf-emojione-color')
+replaces=('emojione-fonts')
+source=("https://github.com/emojione/emojione-assets/releases/download/${pkgver}/emojione-android.ttf"
+        "license-free.pdf")
+sha256sums=('6efb1a43873876bcc9476562e20cf8d875eca20bab456d83a580f46a39321139'
+            'c0911aa8eb1fa9745903dde0c6df8605568cac11015fdf7fe30952b5dd9a7389')
+
+package() {
+    install -d "$pkgdir/usr/share/fonts/${pkgname}"
+    install -t "$pkgdir/usr/share/fonts/${pkgname}" -m644 emojione-android.ttf
+    install -Dm644 license-free.pdf "$pkgdir/usr/share/licenses/$pkgname/LICENSE.pdf"
+}

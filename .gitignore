@@ -1,0 +1,6 @@
+# Build files
+output/*
+!output/.keep
+
+# Local .env
+.env.local
