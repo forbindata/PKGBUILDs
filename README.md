@@ -1,5 +1,7 @@
 # Arch PKGBUILDs
 
+[![CircleCI](https://circleci.com/gh/kriansa/PKGBUILDs.svg?style=svg)](https://circleci.com/gh/kriansa/PKGBUILDs)
+
 This repository is composed of PKGBUILDs I have written or modified from
 existing packages in the Arch Build Service and Arch User Repository to help me
 install packages not in the AUR or pacman repos, or have customized ones to
@@ -28,17 +30,3 @@ All packages are available for `x86_64` only.
 
 The contents of this repository are licensed under 3-Clause BSD. Each package
 has its own license.
-
-## Packages
-
-#### ttf-emojione
-
-Official colorful EmojiOne font. No fontconfig present.
-
-#### ttf-gelasio
-
-Gelasio is designed to be metrics-compatible with Georgia.
-
-#### ttf-nerd-glyphs
-
-Patched font with all glyphs present on NerdFonts. No fontconfig present.
