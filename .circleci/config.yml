@@ -13,6 +13,11 @@ jobs:
           key: build-cache
       # - restore_cache:
       #     key: dependency-cache-{{ checksum "package.json" }}
+
+      - run:
+        name: Update repositories
+        command: pacman -Sy
+
       - run:
           name: Build packages
           command: bin/build
