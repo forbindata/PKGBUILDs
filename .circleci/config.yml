@@ -1,0 +1,55 @@
+---
+version: "2.0"
+
+jobs:
+  build:
+    working_directory: ~/pkgbuilds
+    docker:
+      - image: kriansa/pkgbuilds:latest
+
+    steps:
+      - checkout
+      - restore_cache:
+          key: build-cache
+      # - restore_cache:
+      #     key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Build packages
+          command: bin/build
+
+      - persist_to_workspace:
+          root: .
+          # Must be relative path from root
+          paths:
+            - output
+
+      - save_cache:
+          key: build-cache
+          paths:
+            - output
+      # - save_cache:
+      #     key: dependency-cache-{{ checksum "package.json" }}
+      #     paths:
+      #       - node_modules
+      
+  deploy:
+    working_directory: ~/pkgbuilds
+    docker:
+      - image: kriansa/pkgbuilds:latest
+
+    steps:
+      - attach_workspace:
+          at: ~/pkgbuilds
+      - run:
+          name: Deploy packages
+          command: bin/deploy-to-s3
+
+workflows:
+  version: 2
+
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
