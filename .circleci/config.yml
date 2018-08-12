@@ -16,7 +16,7 @@ jobs:
 
       - run:
           name: Update repositories
-          command: pacman -Sy
+          command: sudo pacman -Sy
 
       - run:
           name: Build packages
