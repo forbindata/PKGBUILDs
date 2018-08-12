@@ -15,8 +15,8 @@ jobs:
       #     key: dependency-cache-{{ checksum "package.json" }}
 
       - run:
-        name: Update repositories
-        command: pacman -Sy
+          name: Update repositories
+          command: pacman -Sy
 
       - run:
           name: Build packages
