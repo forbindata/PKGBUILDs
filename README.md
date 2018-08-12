@@ -15,6 +15,13 @@ want to use this repository, please add it to your `/etc/pacman.conf`:
 Server = https://aur.garajau.com.br/
 ```
 
+Then add my key to Pacman keyring:
+
+```sh
+# pacman-key --recv-keys 0x3E7884756312F945
+# pacman-key --lsign-key 0x3E7884756312F945
+```
+
 All packages are available for `x86_64` only.
 
 ## License
