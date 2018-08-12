@@ -43,6 +43,7 @@ jobs:
       - image: kriansa/pkgbuilds:latest
 
     steps:
+      - checkout
       - attach_workspace:
           at: ~/pkgbuilds
       - run:
