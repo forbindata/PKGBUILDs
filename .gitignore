@@ -1,6 +1,8 @@
 # Build files
-output/*
-!output/.keep
+output/db/*
+output/packages/*
+!output/db/.keep
+!output/packages/.keep
 
 # Local .env
 .env.local
