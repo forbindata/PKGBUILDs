@@ -1,9 +1,9 @@
 #!/bin/sh
 #
 # Arch Package Builder
-# 
+#
 # Usage: bin/build [<package_name>, ...]
-# 
+#
 # If you pass package names, it will look for specific packages on src
 # directory and will try to build them. Otherwise, it will build all packages
 # in that directory.
@@ -55,7 +55,7 @@ build() {
   fi
 
   # Set the output folder of the built package
-  export PKGDEST="$OUTPUT_PATH"
+  export PKGDEST="$OUTPUT_PATH/packages"
 
   # Build the package
   ( cd "$pkg_path" && \
@@ -66,7 +66,7 @@ build() {
 
   # Then add this package to the repository
   ( cd "$PKGDEST" && \
-    repo-add -n "$REPO_NAME.db.tar.gz" "${pkg_file#$PKGDEST/}" )
+    repo-add -n "$OUTPUT_PATH/db/$REPO_NAME.db.tar.gz" "${pkg_file#$PKGDEST/}" )
 }
 
 # Outputs an error message to the console
