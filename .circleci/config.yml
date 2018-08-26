@@ -9,27 +9,19 @@ jobs:
 
     steps:
       - checkout
+
       - restore_cache:
           key: build-cache
 
       - run:
-          name: Update repositories
+          name: Update Arch repositories
           command: sudo pacman -Sy
 
       - run:
-          name: Build packages
-          command: bin/build
-
-      - run:
-          name: Deploy packages
-          command: bin/deploy-to-s3
-
-      - persist_to_workspace:
-          root: .
-          paths:
-            - output
+          name: Build and deploy packages
+          command: bin/build-pipeline "$CIRCLE_COMPARE_URL"
 
       - save_cache:
           key: build-cache
           paths:
-            - output
+            - output/db

@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# CI job entry point
+#
+# Run the build pipeline on the CI server by first checking the git differences
+# on the last commit to check which packages should be (re-)built.
+#
+# Usage: bin/build-pipeline ab02df..2e0cfa
+
+main() {
+  # cd to root path
+  cd "$(dirname "$0")/.." || exit;
+
+  packages=$(changed_packages "$1")
+
+  if [ -z "$packages" ]; then
+    echo "No package changed. Skipping."
+    exit
+  fi
+
+  # First, build all packages
+  # shellcheck disable=SC2086
+  bin/build $packages
+
+  # Then, deploy them all
+  # shellcheck disable=SC2086
+  bin/deploy-to-s3 $packages
+}
+
+changed_packages() {
+  git show --format="" --name-only "$1" src | awk -F '/' '{ print $2 }' \
+    | uniq | xargs
+}
+
+# shellcheck disable=SC2068
+main $@
