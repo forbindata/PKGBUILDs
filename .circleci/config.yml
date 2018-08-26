@@ -19,7 +19,7 @@ jobs:
 
       - run:
           name: Build and deploy packages
-          command: bin/build-pipeline "$(echo $CIRCLE_COMPARE_URL | awk -F '/' '{ print $NF })"
+          command: bin/ci-build "$(echo $CIRCLE_COMPARE_URL | awk -F '/' '{ print $NF }')"
 
       - save_cache:
           key: build-cache
