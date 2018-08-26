@@ -19,7 +19,7 @@ jobs:
 
       - run:
           name: Build and deploy packages
-          command: bin/build-pipeline "$CIRCLE_COMPARE_URL"
+          command: bin/build-pipeline "$CIRCLE_SHA1"
 
       - save_cache:
           key: build-cache
