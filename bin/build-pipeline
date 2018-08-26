@@ -11,7 +11,12 @@ main() {
   # cd to root path
   cd "$(dirname "$0")/.." || exit;
 
-  packages=$(changed_packages "$1")
+  packages=$(changed_packages "$1"); status=$?
+
+  if ! [ $status -eq 0 ]; then
+    echo "Invalid parameter: $1"
+    exit 1
+  fi
 
   if [ -z "$packages" ]; then
     echo "No package changed. Skipping."
@@ -28,8 +33,10 @@ main() {
 }
 
 changed_packages() {
-  git show --format="" --name-only "$1" src | awk -F '/' '{ print $2 }' \
-    | uniq | xargs
+  set -e
+  set -o pipefail
+  git show --format="" --name-only "$1" src 2> /dev/null \
+    | awk -F '/' '{ print $2 }' | uniq | xargs
 }
 
 # shellcheck disable=SC2068
