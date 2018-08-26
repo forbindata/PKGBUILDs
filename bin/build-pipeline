@@ -33,8 +33,7 @@ main() {
 }
 
 changed_packages() {
-  set -e
-  set -o pipefail
+  set -eo pipefail
   git show --format="" --name-only "$1" src 2> /dev/null \
     | awk -F '/' '{ print $2 }' | uniq | xargs
 }
