@@ -11,21 +11,17 @@ jobs:
       - checkout
 
       - restore_cache:
-          key: build-cache
+          key: build-key
 
       - run:
           name: Update Arch repositories
           command: sudo pacman -Sy
 
       - run:
-          name: Get the GPG private key
-          command: bin/pull-sign-key-from-s3
-
-      - run:
           name: Build and deploy packages
           command: bin/ci-build "$(echo $CIRCLE_COMPARE_URL | awk -F '/' '{ print $NF }')"
 
       - save_cache:
-          key: build-cache
+          key: build-key
           paths:
             - output/db

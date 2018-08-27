@@ -18,16 +18,19 @@ main() {
     exit 1
   fi
 
-  if [ -z "$packages" ]; then
-    echo "No package changed. Skipping."
-    exit
-  fi
+  # if [ -z "$packages" ]; then
+  #   echo "No package changed. Skipping."
+  #   exit
+  # fi
 
-  # First, build all packages
+  # First, fetch the signing key from S3
+  bin/pull-sign-key-from-s3
+
+  # Then, build all packages
   # shellcheck disable=SC2086
   bin/build $packages
 
-  # Then, deploy them all
+  # And deploy them
   # shellcheck disable=SC2086
   bin/deploy-to-s3 $packages
 }
