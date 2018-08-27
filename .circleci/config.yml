@@ -10,9 +10,6 @@ jobs:
     steps:
       - checkout
 
-      - restore_cache:
-          key: build-key
-
       - run:
           name: Update Arch repositories
           command: sudo pacman -Sy
@@ -20,8 +17,3 @@ jobs:
       - run:
           name: Build and deploy packages
           command: bin/ci-build "$(echo $CIRCLE_COMPARE_URL | awk -F '/' '{ print $NF }')"
-
-      - save_cache:
-          key: build-key
-          paths:
-            - output/db

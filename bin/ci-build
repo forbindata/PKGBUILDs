@@ -23,10 +23,11 @@ main() {
   #   exit
   # fi
 
-  # First, fetch the signing key from S3
+  # First, fetch the data from S3
   bin/pull-sign-key-from-s3
+  bin/pull-repo-from-s3
 
-  # Then, build all packages
+  # Then, build needed packages
   # shellcheck disable=SC2086
   bin/build $packages
 
