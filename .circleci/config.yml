@@ -18,6 +18,10 @@ jobs:
           command: sudo pacman -Sy
 
       - run:
+          name: Get the GPG private key
+          command: bin/pull-sign-key-from-s3
+
+      - run:
           name: Build and deploy packages
           command: bin/ci-build "$(echo $CIRCLE_COMPARE_URL | awk -F '/' '{ print $NF }')"
 

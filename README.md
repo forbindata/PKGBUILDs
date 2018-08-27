@@ -39,8 +39,10 @@ following environment variables to your CI:
 * **REPO_NAME** - This is the Pacman repository name
 * **AWS_PROFILE** or **AWS_ACCESS_KEY_ID** & **AWS_SECRET_ACCESS_KEY** - This
   is used to authenticate at AWS S3 to store the built packages.
-* **AWS_S3_BUCKET_NAME** - This is used to determine to which AWS S3 bucket we
-  need to upload the packages to.
+* **AWS_S3_PACKAGES_BUCKET_NAME** - This is used to determine to which AWS S3 
+  bucket we need to upload the packages to.
+* **AWS_S3_SECRET_BUCKET_NAME** - This is used to determine to which AWS S3
+  bucket we need to upload the packages to.
 
 ## License
 

@@ -16,7 +16,7 @@
 #     point to the key created by IAM.
 #   (Optional) AWS_SECRET_ACCESS_KEY => If not using AWS profiles, this should
 #     be the access secret of your key.
-#   (Required) AWS_S3_BUCKET_NAME => The bucket name to which you want to push
+#   (Required) AWS_S3_PACKAGES_BUCKET_NAME => The bucket name to which you want to push
 #     the packages to. Ensure that you have write access to it.
 #   (Required) REPO_NAME => The name of the repository file that you want to
 #     add your built packages to.
@@ -32,8 +32,8 @@ main() {
   # relative to this directory.
   OUTPUT_PATH="$(pwd)/output"
 
-  if [ -z "$AWS_S3_BUCKET_NAME" ]; then
-    error "Please, set the S3 Bucket using the variable \$AWS_S3_BUCKET_NAME"
+  if [ -z "$AWS_S3_PACKAGES_BUCKET_NAME" ]; then
+    error "Please, set the S3 Bucket using the variable \$AWS_S3_PACKAGES_BUCKET_NAME"
     exit 1
   fi
 
@@ -93,11 +93,11 @@ delete_old_versions() {
   package_name=$1
   built_package_name=$2
 
-  packages_to_delete=$(aws s3 ls "$AWS_S3_BUCKET_NAME/$package_name-" | awk "!/$built_package_name/ { print \$4 }")
+  packages_to_delete=$(aws s3 ls "$AWS_S3_PACKAGES_BUCKET_NAME/$package_name-" | awk "!/$built_package_name/ { print \$4 }")
 
   for filename in $packages_to_delete; do
     success "Removing old package $filename"
-    aws s3 rm "s3://$AWS_S3_BUCKET_NAME/$filename" > /dev/null
+    aws s3 rm "s3://$AWS_S3_PACKAGES_BUCKET_NAME/$filename" > /dev/null
     info "File $filename removed from repository"
   done
 }
@@ -115,7 +115,7 @@ upload_artifact() {
   file=$2
 
   # Avoid re-uploading packages that are already there
-  s3_md5=$(aws s3api head-object --bucket "$AWS_S3_BUCKET_NAME" --key "$file" \
+  s3_md5=$(aws s3api head-object --bucket "$AWS_S3_PACKAGES_BUCKET_NAME" --key "$file" \
     --query ETag --output text 2> /dev/null | grep --extended --only-match \
     '[a-f0-9]{32}'); status=$?
 
@@ -130,7 +130,7 @@ upload_artifact() {
   fi
 
   success "Uploading file $folder/$file"
-  aws s3 cp "$OUTPUT_PATH/$folder/$file" "s3://$AWS_S3_BUCKET_NAME/$file" > /dev/null
+  aws s3 cp "$OUTPUT_PATH/$folder/$file" "s3://$AWS_S3_PACKAGES_BUCKET_NAME/$file" > /dev/null
   status=$?
 
   if [ $status -eq 0 ]; then

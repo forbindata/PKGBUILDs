@@ -59,14 +59,15 @@ build() {
 
   # Build the package
   ( cd "$pkg_path" && \
-    makepkg --clean --syncdeps --needed --noconfirm )
+    makepkg --clean --syncdeps --needed --noconfirm --sign )
 
   # Get the name of the built package
   pkg_file=$(cd "$pkg_path" && makepkg --packagelist)
 
   # Then add this package to the repository
   ( cd "$PKGDEST" && \
-    repo-add -n "$OUTPUT_PATH/db/$REPO_NAME.db.tar.gz" "${pkg_file#$PKGDEST/}" )
+    repo-add --new --verify --sign "$OUTPUT_PATH/db/$REPO_NAME.db.tar.gz" \
+    "${pkg_file#$PKGDEST/}" )
 }
 
 # Outputs an error message to the console

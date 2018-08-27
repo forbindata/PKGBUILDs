@@ -1,0 +1,86 @@
+#!/bin/sh
+#
+# Pull GPG sign key from S3 bucket
+#
+# Usage: bin/pull-sign-key-from-s3
+#
+# This will pull the private signing key from S3 and import it onto the local
+# GPG keyring.
+#
+# Environment:
+#   (Optional) AWS_PROFILE => Set which AWS profile is going to be used to
+#     perform the S3 operations. This is recommended over using the access keys
+#     directly.
+#   (Optional) AWS_ACCESS_KEY_ID => If not using AWS profiles, this should
+#     point to the key created by IAM.
+#   (Optional) AWS_SECRET_ACCESS_KEY => If not using AWS profiles, this should
+#     be the access secret of your key.
+#   (Required) AWS_S3_SECRET_BUCKET_NAME => The bucket name to which you want
+#     to push the packages to. Ensure that you have write access to it.
+#   (Required) REPO_NAME => The name of the repository file that you want to
+#     add your built packages to.
+#
+# Informational:
+#   This script will look for a file named sign-key-for-$REPO_NAME.asc at the
+#   top level of the S3 bucket. Ensure that this file is there.
+
+main() {
+  # cd to root path
+  cd "$(dirname "$0")/.." || exit
+
+  if [ -z "$AWS_S3_SECRET_BUCKET_NAME" ]; then
+    error "Please, set the S3 Bucket using the variable \$AWS_S3_SECRET_BUCKET_NAME"
+    exit 1
+  fi
+
+  if [ -z "$REPO_NAME" ]; then
+    error "Please, set the name of your repository with the var \$REPO_NAME"
+    exit 1
+  fi
+
+  tmp_dir="$(mktemp -d)"
+  key_path="$tmp_dir/gpg-key.asc"
+
+  # Get the secret file from AWS S3
+  pull_into "$key_path"
+
+  # Then import it onto the GPG keyring
+  import_into_gpg_keyring "$key_path"
+
+  # Then remove the tempdir
+  rm -rf "$tmp_dir"
+}
+
+pull_into() {
+  path=$1
+
+  success "Pulling the GPG secret key from S3 bucket"
+  aws s3 cp "s3://$AWS_S3_SECRET_BUCKET_NAME/sign-key-for-$REPO_NAME.asc" \
+    "$path" 2> /dev/null; status=$?
+
+  if [ "$status" != 0 ]; then
+    error "Failed to pull the GPG key from the S3!"
+    exit 1
+  fi
+
+  info "Success!"
+}
+
+import_into_gpg_keyring() {
+  path=$1
+
+  success "Importing the GPG secret key to the keyring"
+  gpg --import "$path"
+}
+
+# Print colorful notice messages to the console
+bold=$(tput bold)
+red=$(tput setaf 1)
+green=$(tput setaf 2)
+blue=$(tput setaf 4)
+normal=$(tput sgr0)
+error() { echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"; }
+success() { echo "${bold}${green}==>${normal}${bold} ${*}${normal}"; }
+info() { echo "${bold}${blue}  ->${normal}${bold} ${*}${normal}"; }
+
+main
