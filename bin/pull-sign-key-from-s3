@@ -74,11 +74,11 @@ import_into_gpg_keyring() {
 }
 
 # Print colorful notice messages to the console
-normal="\\e[0m"
-bold="\\e[1m"
-blue="\\e[34m"
-green="\\e[32m"
-red="\\e[31m"
+normal="\e[0m"
+bold="\e[1m"
+blue="\e[34m"
+green="\e[32m"
+red="\e[31m"
 error() { echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"; }
 success() { echo "${bold}${green}==>${normal}${bold} ${*}${normal}"; }
 info() { echo "${bold}${blue}  ->${normal}${bold} ${*}${normal}"; }
