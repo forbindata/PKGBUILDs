@@ -72,9 +72,10 @@ build() {
 
 # Outputs an error message to the console
 error() {
-  bold=$(tput bold)
-  red=$(tput setaf 1)
-  normal=$(tput sgr0)
+  normal="\\e[0m"
+  bold="\\e[1m"
+  red="\\e[31m"
+
   echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"
 }
 

@@ -142,12 +142,12 @@ upload_artifact() {
 }
 
 # Print colorful notice messages to the console
-bold=$(tput bold)
-red=$(tput setaf 1)
-green=$(tput setaf 2)
-orange=$(tput setaf 3)
-blue=$(tput setaf 4)
-normal=$(tput sgr0)
+normal="\\e[0m"
+bold="\\e[1m"
+blue="\\e[34m"
+green="\\e[32m"
+red="\\e[31m"
+orange="\\e[33m"
 error() { echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"; }
 success() { echo "${bold}${green}==>${normal}${bold} ${*}${normal}"; }
 warn() { echo "${bold}${orange}==> WARNING:${normal}${bold} ${*}${normal}"; }
