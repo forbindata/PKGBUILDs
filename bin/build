@@ -72,11 +72,12 @@ build() {
 
 # Outputs an error message to the console
 error() {
-  normal="\e[0m"
-  bold="\e[1m"
-  red="\e[31m"
+  normal="\\e[0m"
+  bold="\\e[1m"
+  red="\\e[31m"
 
-  echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"
+  # shellcheck disable=SC2059
+  printf "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}\\n"
 }
 
 # shellcheck disable=SC2068

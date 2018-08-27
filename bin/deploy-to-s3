@@ -142,16 +142,16 @@ upload_artifact() {
 }
 
 # Print colorful notice messages to the console
-normal="\e[0m"
-bold="\e[1m"
-blue="\e[34m"
-green="\e[32m"
-red="\e[31m"
-orange="\e[33m"
-error() { echo "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}"; }
-success() { echo "${bold}${green}==>${normal}${bold} ${*}${normal}"; }
-warn() { echo "${bold}${orange}==> WARNING:${normal}${bold} ${*}${normal}"; }
-info() { echo "${bold}${blue}  ->${normal}${bold} ${*}${normal}"; }
+normal="\\e[0m"
+bold="\\e[1m"
+blue="\\e[34m"
+green="\\e[32m"
+red="\\e[31m"
+orange="\\e[33m"
+error() { printf "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}\\n"; }
+success() { printf "${bold}${green}==>${normal}${bold} ${*}${normal}\\n"; }
+warn() { printf "${bold}${orange}==> WARNING:${normal}${bold} ${*}${normal}\\n"; }
+info() { printf "${bold}${blue}  ->${normal}${bold} ${*}${normal}\\n"; }
 
 # shellcheck disable=SC2068
 main $@
