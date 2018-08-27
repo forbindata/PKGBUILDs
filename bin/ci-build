@@ -18,10 +18,10 @@ main() {
     exit 1
   fi
 
-  # if [ -z "$packages" ]; then
-  #   echo "No package changed. Skipping."
-  #   exit
-  # fi
+  if [ -z "$packages" ]; then
+    echo "No package changed. Skipping."
+    exit
+  fi
 
   # First, fetch the data from S3
   bin/pull-sign-key-from-s3
