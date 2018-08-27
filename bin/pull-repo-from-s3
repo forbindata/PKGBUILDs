@@ -49,7 +49,7 @@ pull_into() {
   success "Pulling the repo from S3 bucket"
   for file in $files; do
     aws s3 cp "s3://$AWS_S3_PACKAGES_BUCKET_NAME/$file" \
-      "$dir/$file" 2> /dev/null; status=$?
+      "$dir/$file" > /dev/null 2>&1; status=$?
 
     if [ "$status" != 0 ]; then
       error "Failed to pull the repo file '$file' from the S3!"
