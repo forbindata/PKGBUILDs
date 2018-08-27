@@ -1,6 +1,6 @@
 # Arch PKGBUILDs
 
-[![CircleCI](https://circleci.com/gh/kriansa/PKGBUILDs.svg?style=svg)](https://circleci.com/gh/kriansa/PKGBUILDs)
+[![CircleCI](https://circleci.com/gh/kriansa/PKGBUILDs.svg?style=shield)](https://circleci.com/gh/kriansa/PKGBUILDs)
 
 This repository is composed of PKGBUILDs I have written or modified from
 existing packages in the Arch Build Service and Arch User Repository to help me
