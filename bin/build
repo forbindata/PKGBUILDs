@@ -80,7 +80,7 @@ build() {
 
   # Build the package
   ( cd "$pkg_path" && \
-    makepkg --clean --syncdeps --needed --noconfirm $sign_flag_pkg )
+    makepkg --clean --force --syncdeps --needed --noconfirm $sign_flag_pkg )
 
   # Get the name of the built package
   built_pkg_file=$(cd "$pkg_path" && makepkg --packagelist)
