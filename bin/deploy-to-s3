@@ -25,6 +25,9 @@ main() {
   # cd to root path
   cd "$(dirname "$0")/.." || exit
 
+  # shellcheck disable=2039,1091
+  source lib/messages.sh
+
   # Parameters
   packages=$*
 
@@ -32,6 +35,19 @@ main() {
   # relative to this directory.
   OUTPUT_PATH="$(pwd)/output"
 
+  # Checks presence of required params
+  validate_env
+
+  if [ $# -eq 0 ]; then
+    upload_multiple_packages "$(ls -1 src)"
+  else
+    upload_multiple_packages "$packages"
+  fi
+}
+
+# Checks the environment for the required variables and then stops if they are
+# not found.
+validate_env() {
   if [ -z "$AWS_S3_PACKAGES_BUCKET_NAME" ]; then
     error "Please, set the S3 Bucket using the variable \$AWS_S3_PACKAGES_BUCKET_NAME"
     exit 1
@@ -40,12 +56,6 @@ main() {
   if [ -z "$REPO_NAME" ]; then
     error "Please, set the name of your repository with the var \$REPO_NAME"
     exit 1
-  fi
-
-  if [ $# -eq 0 ]; then
-    upload_multiple_packages "$(ls -1 src)"
-  else
-    upload_multiple_packages "$packages"
   fi
 }
 
@@ -140,18 +150,6 @@ upload_artifact() {
     exit 1
   fi
 }
-
-# Print colorful notice messages to the console
-normal="\\e[0m"
-bold="\\e[1m"
-blue="\\e[34m"
-green="\\e[32m"
-red="\\e[31m"
-orange="\\e[33m"
-error() { printf "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}\\n"; }
-success() { printf "${bold}${green}==>${normal}${bold} ${*}${normal}\\n"; }
-warn() { printf "${bold}${orange}==> WARNING:${normal}${bold} ${*}${normal}\\n"; }
-info() { printf "${bold}${blue}  ->${normal}${bold} ${*}${normal}\\n"; }
 
 # shellcheck disable=SC2068
 main $@

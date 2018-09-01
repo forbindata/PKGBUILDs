@@ -28,6 +28,32 @@ main() {
   # cd to root path
   cd "$(dirname "$0")/.." || exit
 
+  # shellcheck disable=2039,1091
+  source lib/messages.sh
+
+  # Checks presence of required params
+  validate_env
+
+  # Create temp dir to store the key file
+  tmp_dir="$(mktemp -d)"
+
+  # Set the key names (origin & destination)
+  remote_file_name="sign-key-for-$REPO_NAME.asc"
+  key_path="$tmp_dir/gpg-key.asc"
+
+  # Get the secret file from AWS S3
+  download_from_s3 "$remote_file_name" "$key_path"
+
+  # Then import it onto the GPG keyring
+  import_into_gpg_keyring "$key_path"
+
+  # Then remove the tempdir
+  rm -rf "$tmp_dir"
+}
+
+# Checks the environment for the required variables and then stops if they are
+# not found.
+validate_env() {
   if [ -z "$AWS_S3_SECRET_BUCKET_NAME" ]; then
     error "Please, set the S3 Bucket using the variable \$AWS_S3_SECRET_BUCKET_NAME"
     exit 1
@@ -37,29 +63,23 @@ main() {
     error "Please, set the name of your repository with the var \$REPO_NAME"
     exit 1
   fi
-
-  tmp_dir="$(mktemp -d)"
-  key_path="$tmp_dir/gpg-key.asc"
-
-  # Get the secret file from AWS S3
-  pull_into "$key_path"
-
-  # Then import it onto the GPG keyring
-  import_into_gpg_keyring "$key_path"
-
-  # Then remove the tempdir
-  rm -rf "$tmp_dir"
 }
 
-pull_into() {
-  path=$1
+# Pulls a file on the S3 bucket to a local path
+#
+# Parameters
+#   1 - The name of the file that is saved on the remote
+#   2 - Full path to where you want to save the file
+download_from_s3() {
+  remote_file_name=$1
+  path=$2
 
   success "Pulling the GPG secret key from S3 bucket"
-  aws s3 cp "s3://$AWS_S3_SECRET_BUCKET_NAME/sign-key-for-$REPO_NAME.asc" \
+  aws s3 cp "s3://$AWS_S3_SECRET_BUCKET_NAME/$remote_file_name" \
     "$path" > /dev/null 2>&1; status=$?
 
   if [ "$status" != 0 ]; then
-    error "Failed to pull the GPG key from the S3!"
+    error "Failed to pull the file '$remote_file_name' from the S3!"
     exit 1
   fi
 
@@ -72,15 +92,5 @@ import_into_gpg_keyring() {
   success "Importing the GPG secret key to the keyring"
   gpg --import "$path"
 }
-
-# Print colorful notice messages to the console
-normal="\\e[0m"
-bold="\\e[1m"
-blue="\\e[34m"
-green="\\e[32m"
-red="\\e[31m"
-error() { printf "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}\\n"; }
-success() { printf "${bold}${green}==>${normal}${bold} ${*}${normal}\\n"; }
-info() { printf "${bold}${blue}  ->${normal}${bold} ${*}${normal}\\n"; }
 
 main

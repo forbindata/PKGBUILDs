@@ -43,6 +43,9 @@ following environment variables to your CI:
   bucket we need to upload the packages to.
 * **AWS_S3_SECRET_BUCKET_NAME** - This is used to determine to which AWS S3
   bucket we need to upload the packages to.
+* _(Optional)_ **DISABLE_SIGNATURES** - This is used to disable signatures when
+  building packages. This is useful for debugging only and should **not** be 
+  used for production packages.
 
 ## License
 

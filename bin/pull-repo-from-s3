@@ -28,6 +28,19 @@ main() {
   # cd to root path
   cd "$(dirname "$0")/.." || exit
 
+  # shellcheck disable=2039,1091
+  source lib/messages.sh
+
+  # Checks presence of required params
+  validate_env
+
+  # Get the repo from the S3
+  download_db_files "output/db"
+}
+
+# Checks the environment for the required variables and then stops if they are
+# not found.
+validate_env() {
   if [ -z "$AWS_S3_PACKAGES_BUCKET_NAME" ]; then
     error "Please, set the S3 Bucket using the variable \$AWS_S3_PACKAGES_BUCKET_NAME"
     exit 1
@@ -37,12 +50,13 @@ main() {
     error "Please, set the name of your repository with the var \$REPO_NAME"
     exit 1
   fi
-
-  # Get the repo from the S3
-  pull_into "output/db"
 }
 
-pull_into() {
+# Download all the DB files onto the specified folder
+#
+# Parameters
+#   1 - The path you want to download the DB files to.
+download_db_files() {
   dir=$1
   files="$REPO_NAME.db $REPO_NAME.db.tar.gz $REPO_NAME.files $REPO_NAME.files.tar.gz"
 
@@ -59,15 +73,5 @@ pull_into() {
 
   info "Success!"
 }
-
-# Print colorful notice messages to the console
-normal="\\e[0m"
-bold="\\e[1m"
-blue="\\e[34m"
-green="\\e[32m"
-red="\\e[31m"
-error() { printf "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}\\n"; }
-success() { printf "${bold}${green}==>${normal}${bold} ${*}${normal}\\n"; }
-info() { printf "${bold}${blue}  ->${normal}${bold} ${*}${normal}\\n"; }
 
 main

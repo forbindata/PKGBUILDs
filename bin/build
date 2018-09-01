@@ -11,10 +11,18 @@
 # Environment:
 #   (Required) REPO_NAME => The name of the repository file that you want to
 #     add your built packages to.
+#   (Optional) DISABLE_SIGNATURES => Whether we want to disable build
+#     signatures. This is not recommended for production.
 
 main() {
   # cd to root path
   cd "$(dirname "$0")/.." || exit
+
+  # shellcheck disable=2039,1091
+  source lib/messages.sh
+
+  # Checks presence of required params
+  validate_env
 
   # Parameters
   packages=$*
@@ -23,15 +31,19 @@ main() {
   # stored in this directory.
   OUTPUT_PATH="$(pwd)/output"
 
-  if [ -z "$REPO_NAME" ]; then
-    error "Please, set the name of your repository with the var \$REPO_NAME"
-    exit 1
-  fi
-
   if [ $# -eq 0 ]; then
     build_multiple "$(ls -1 src)"
   else
     build_multiple "$packages"
+  fi
+}
+
+# Checks the environment for the required variables and then stops if they are
+# not found.
+validate_env() {
+  if [ -z "$REPO_NAME" ]; then
+    error "Please, set the name of your repository with the var \$REPO_NAME"
+    exit 1
   fi
 }
 
@@ -57,27 +69,42 @@ build() {
   # Set the output folder of the built package
   export PKGDEST="$OUTPUT_PATH/packages"
 
+  # Add the signature flag
+  if [ -z "$DISABLE_SIGNATURES" ]; then
+    sign_flag_pkg="--sign"
+    sign_flag_repo="--sign --verify"
+  else
+    sign_flag_pkg=""
+    sign_flag_repo=""
+  fi
+
   # Build the package
   ( cd "$pkg_path" && \
-    makepkg --clean --syncdeps --needed --noconfirm --sign )
+    makepkg --clean --syncdeps --needed --noconfirm $sign_flag_pkg )
 
   # Get the name of the built package
-  pkg_file=$(cd "$pkg_path" && makepkg --packagelist)
+  built_pkg_file=$(cd "$pkg_path" && makepkg --packagelist)
+  built_pkg_basename="${built_pkg_file#$PKGDEST/}"
 
   # Then add this package to the repository
-  ( cd "$PKGDEST" && \
-    repo-add --new --verify --sign "$OUTPUT_PATH/db/$REPO_NAME.db.tar.gz" \
-    "${pkg_file#$PKGDEST/}" )
+  ( cd "$PKGDEST" && repo-add --new $sign_flag_repo \
+    "$OUTPUT_PATH/db/$REPO_NAME.db.tar.gz" "$built_pkg_basename" )
+
+  # Remove old versions of this package locally
+  sweep_old_packages "$package" "$built_pkg_basename"
 }
 
-# Outputs an error message to the console
-error() {
-  normal="\\e[0m"
-  bold="\\e[1m"
-  red="\\e[31m"
+sweep_old_packages() {
+  package=$1
+  current_package_file=$2
+  output="$OUTPUT_PATH/packages"
 
-  # shellcheck disable=SC2059
-  printf "${bold}${red}==> ERROR:${normal}${bold} ${*}${normal}\\n"
+  # shellcheck disable=2010
+  old_packages=$(ls -1 "$output" | grep "$package" | grep -v "$current_package_file")
+  for old_pkg in $old_packages; do
+    rm "$output/$old_pkg"
+    warn "Removed old package $old_pkg"
+  done
 }
 
 # shellcheck disable=SC2068
