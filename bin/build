@@ -82,6 +82,12 @@ build() {
   ( cd "$pkg_path" && \
     makepkg --clean --force --syncdeps --needed --noconfirm $sign_flag_pkg )
 
+  # Stop if the build fails
+  test $? -eq 0 || exit 1
+
+  # Create the .SRCINFO file
+  ( cd "$pkg_path" && makepkg --printsrcinfo > .SRCINFO )
+
   # Get the name of the built package
   built_pkg_file=$(cd "$pkg_path" && makepkg --packagelist)
   built_pkg_basename="${built_pkg_file#$PKGDEST/}"
