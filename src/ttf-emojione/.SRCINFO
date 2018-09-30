@@ -1,6 +1,6 @@
 pkgbase = ttf-emojione
 	pkgdesc = Official colorful EmojiOne font
-	pkgver = 3.1.2
+	pkgver = 4.0.1
 	pkgrel = 1
 	url = https://github.com/emojione/emojione-assets
 	arch = any
@@ -9,9 +9,9 @@ pkgbase = ttf-emojione
 	conflicts = noto-fonts-emoji
 	conflicts = ttf-emojione-color
 	replaces = emojione-fonts
-	source = https://github.com/emojione/emojione-assets/releases/download/3.1.2/emojione-android.ttf
+	source = https://github.com/emojione/emojione-assets/releases/download/4.0.1/emojione-android.ttf
 	source = license-free.pdf
-	sha256sums = 6efb1a43873876bcc9476562e20cf8d875eca20bab456d83a580f46a39321139
+	sha256sums = 8955dd64a7d1db5d476392c4bfc70e155c5d2caf74a48539b08a818830ebbafb
 	sha256sums = c0911aa8eb1fa9745903dde0c6df8605568cac11015fdf7fe30952b5dd9a7389
 
 pkgname = ttf-emojione
