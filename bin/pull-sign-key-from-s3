@@ -75,11 +75,13 @@ download_from_s3() {
   path=$2
 
   success "Pulling the GPG secret key from S3 bucket"
-  aws s3 cp "s3://$AWS_S3_SECRET_BUCKET_NAME/$remote_file_name" \
-    "$path" > /dev/null 2>&1; status=$?
+  return_msg=$(aws s3 cp "s3://$AWS_S3_SECRET_BUCKET_NAME/$remote_file_name" \
+    "$path" 2>&1); status=$?
 
   if [ "$status" != 0 ]; then
     error "Failed to pull the file '$remote_file_name' from the S3!"
+    # shellcheck disable=2059
+    printf "$return_msg\\n"
     exit 1
   fi
 
