@@ -5,7 +5,7 @@
 # Run the build pipeline on the CI server by first checking the git differences
 # on the last commit to check which packages should be (re-)built.
 #
-# Usage: bin/build-pipeline ab02df..2e0cfa
+# Usage: bin/ci-build ab02df..2e0cfa
 
 main() {
   # cd to root path
