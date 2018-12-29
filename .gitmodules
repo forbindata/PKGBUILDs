@@ -7,3 +7,6 @@
 [submodule "pkgs/slack-desktop"]
 	path = pkgs/slack-desktop
 	url = https://aur.archlinux.org/slack-desktop.git
+[submodule "pkgs/nautilus-dropbox"]
+	path = pkgs/nautilus-dropbox
+	url = https://aur.archlinux.org/nautilus-dropbox.git
