@@ -10,3 +10,6 @@
 [submodule "pkgs/nautilus-dropbox"]
 	path = pkgs/nautilus-dropbox
 	url = https://aur.archlinux.org/nautilus-dropbox.git
+[submodule "pkgs/ttf-symbola"]
+	path = pkgs/ttf-symbola
+	url = https://aur.archlinux.org/ttf-symbola.git
