@@ -19,3 +19,6 @@
 [submodule "pkgs/ttf-iosevka-term"]
 	path = pkgs/ttf-iosevka-term
 	url = https://aur.archlinux.org/ttf-iosevka-term.git
+[submodule "pkgs/ttf-gelasio-ib"]
+	path = pkgs/ttf-gelasio-ib
+	url = https://aur.archlinux.org/ttf-gelasio-ib.git
