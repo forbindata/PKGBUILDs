@@ -1,0 +1,3 @@
+[submodule "pkgs/gnome-shell-extension-system-monitor-git"]
+	path = pkgs/gnome-shell-extension-system-monitor-git
+	url = https://aur.archlinux.org/gnome-shell-extension-system-monitor-git.git
