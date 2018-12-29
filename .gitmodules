@@ -25,3 +25,6 @@
 [submodule "pkgs/ttf-comic-neue"]
 	path = pkgs/ttf-comic-neue
 	url = https://aur.archlinux.org/ttf-comic-neue.git
+[submodule "pkgs/ttf-emojione"]
+	path = pkgs/ttf-emojione
+	url = https://aur.archlinux.org/ttf-emojione.git
