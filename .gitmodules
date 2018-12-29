@@ -28,3 +28,6 @@
 [submodule "pkgs/ttf-emojione"]
 	path = pkgs/ttf-emojione
 	url = https://aur.archlinux.org/ttf-emojione.git
+[submodule "pkgs/dropbox"]
+	path = pkgs/dropbox
+	url = https://aur.archlinux.org/dropbox.git

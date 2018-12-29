@@ -56,7 +56,7 @@ function add_pkg {
 
   ( cd "$pkg_base_path" && git submodule add "$url" )
 
-  echo "TODO: Do the git commit!"
+  git commit -m ":sparkles: packages: add $pkg"
 }
 
 function is_package_installed {
