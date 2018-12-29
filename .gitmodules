@@ -13,3 +13,6 @@
 [submodule "pkgs/ttf-symbola"]
 	path = pkgs/ttf-symbola
 	url = https://aur.archlinux.org/ttf-symbola.git
+[submodule "pkgs/ttf-roboto-mono"]
+	path = pkgs/ttf-roboto-mono
+	url = https://aur.archlinux.org/ttf-roboto-mono.git
