@@ -22,3 +22,6 @@
 [submodule "pkgs/ttf-gelasio-ib"]
 	path = pkgs/ttf-gelasio-ib
 	url = https://aur.archlinux.org/ttf-gelasio-ib.git
+[submodule "pkgs/ttf-comic-neue"]
+	path = pkgs/ttf-comic-neue
+	url = https://aur.archlinux.org/ttf-comic-neue.git
