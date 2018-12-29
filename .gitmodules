@@ -31,3 +31,6 @@
 [submodule "pkgs/dropbox"]
 	path = pkgs/dropbox
 	url = https://aur.archlinux.org/dropbox.git
+[submodule "pkgs/wrk"]
+	path = pkgs/wrk
+	url = https://aur.archlinux.org/wrk.git
