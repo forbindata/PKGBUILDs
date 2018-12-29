@@ -16,3 +16,6 @@
 [submodule "pkgs/ttf-roboto-mono"]
 	path = pkgs/ttf-roboto-mono
 	url = https://aur.archlinux.org/ttf-roboto-mono.git
+[submodule "pkgs/ttf-iosevka-term"]
+	path = pkgs/ttf-iosevka-term
+	url = https://aur.archlinux.org/ttf-iosevka-term.git
