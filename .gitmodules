@@ -4,3 +4,6 @@
 [submodule "pkgs/spotify"]
 	path = pkgs/spotify
 	url = https://aur.archlinux.org/spotify.git
+[submodule "pkgs/slack-desktop"]
+	path = pkgs/slack-desktop
+	url = https://aur.archlinux.org/slack-desktop.git
