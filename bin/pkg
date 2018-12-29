@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+#
+# Arch Package Builder
+
+# shellcheck disable=SC1091
+function main {
+  # cd to app root path
+  cd "$(dirname "$0")/.." || exit
+
+  # Load all the library
+  source "lib/common.sh"
+  source "lib/add.sh"
+  source "lib/build.sh"
+  source "lib/install.sh"
+  source "lib/remove.sh"
+  source "lib/update.sh"
+  source "lib/upgrade.sh"
+
+  # Set the global config
+  readonly pkg_base_path="pkgs"
+  readonly repo_db="/var/cache/pacman/custom/git.db.tar.gz"
+
+  # The first parameter is the subcommand
+  local command=$1; shift
+
+  case "$command" in
+    add|build|install|update|upgrade|remove) "cmd::$command" "$@" ;;
+    help) help ;;
+    *) echo "Invalid command!" && help && exit 1 ;;
+  esac
+}
+
+function help {
+  echo ""
+  echo "Usage: pkg <COMMAND> [ARGUMENTS]"
+  echo ""
+  echo "A simple helper for managing PKGBUILDs from local or external sources."
+  echo ""
+  echo "Commands:"
+  echo "  add        Add a new package to the git repo"
+  echo "  build      Build a package in the git repo"
+  echo "  install    Install a package already present in the git repo"
+  echo "  update     Update packages from their external sources"
+  echo "  upgrade    Updates, builds and install the listed packages"
+  echo "  remove     Uninstall and remove a package from this git repo"
+}
+
+main "$@"
