@@ -6,7 +6,7 @@ function cmd::update {
   local pkgs=() updated_packages=0
 
   # Read the packages from parameters or get all from the $pkg_base_path
-  test $# -gt 0 && pkgs=("$@") || mapfile -t pkgs < <(list_pkgs)
+  if [ $# -gt 0 ]; then pkgs=("$@"); else mapfile -t pkgs < <(list_pkgs); fi
 
   for pkg in "${pkgs[@]}"; do
     update_pkg "$pkg" && ((updated_packages+=1))
