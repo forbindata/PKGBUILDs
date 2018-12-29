@@ -6,7 +6,7 @@ function cmd::build {
   local pkgs=() built_packages=0
 
   # Read the packages from parameters or get all from the $pkg_base_path
-  test $# -gt 0 && pkgs=("$@") || pkgs=("$(list_pkgs)")
+  test $# -gt 0 && pkgs=("$@") || mapfile -t pkgs < <(list_pkgs)
 
   for pkg in "${pkgs[@]}"; do
     build_pkg "$pkg" && ((built_packages+=1))
@@ -51,6 +51,10 @@ function build_pkg {
       git add "$pkg_path/.SRCINFO"
       git commit -m ":package: $pkg: update .SRCINFO"
     fi
+  else
+    # When on submodule repositories, usually the build process leaves some files behind such as
+    # caches or PKGBUILD version updates for VCS packages
+    ( cd "$pkg_path" && git reset --hard HEAD && git clean -fd )
   fi
 
   # Add the package output to the pacman repo

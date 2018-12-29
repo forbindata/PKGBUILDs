@@ -6,10 +6,10 @@ function cmd::install {
   local pkgs=()
 
   # Read the packages from parameters or get all from the $pkg_base_path
-  test $# -gt 0 && pkgs=("$@") || pkgs=("$(list_pkgs)")
+  test $# -gt 0 && pkgs=("$@") || mapfile -t pkgs < <(list_pkgs)
 
   if install_pkgs "${pkgs[@]}"; then
-    success "$# package(s) installed."
+    success "${#pkgs[@]} package(s) installed."
   fi
 }
 
