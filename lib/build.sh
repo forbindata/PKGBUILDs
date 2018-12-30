@@ -5,18 +5,42 @@
 function cmd::build {
   local pkgs=() built_packages=0
 
+  declare opt_all opt_install opt__list
+  parseopts "ai" "all,install" "$@" || exit 1
+  cmd::build::validates_args "$@"
+
   # Read the packages from parameters or get all from the $pkg_base_path
-  if [ $# -gt 0 ]; then pkgs=("$@"); else mapfile -t pkgs < <(list_pkgs); fi
+  if $opt_all; then mapfile -t pkgs < <(list_pkgs); else pkgs=("${opt__list[@]}"); fi
 
   for pkg in "${pkgs[@]}"; do
     build_pkg "$pkg" && ((built_packages+=1))
   done
 
-  if [ $built_packages -le 0 ]; then
-    success "No packages built."
-  else
-    success "$built_packages package(s) built."
+  if $opt_install && [ $built_packages -gt 0 ]; then
+    install_pkgs "${pkgs[@]}"
   fi
+
+  if [ $built_packages -le 0 ]; then
+    msg "No packages built."
+  else
+    msg "$built_packages package(s) built."
+  fi
+}
+
+function cmd::build::validates_args {
+  validates_all_or_package_argument_list "cmd::build::help" "$opt_all" "${#opt__list[@]}"
+}
+
+function cmd::build::help {
+  echo ""
+  echo "Usage: $0 build [OPTIONS] [<PKG> ...]"
+  echo ""
+  echo "Builds the specified PKGs."
+  echo ""
+  echo "Options:"
+  echo "  -a, --all       Instead of passing each separate package as argument, you can use this"
+  echo "                  to build all packages from this git repository."
+  echo "  -i, --install   After building all specified packages, install them with $0 install."
 }
 
 # Build a single package
@@ -25,7 +49,7 @@ function cmd::build {
 function build_pkg {
   local pkg=$1
 
-  local pkg_path="$pkg_base_path/$pkg"
+  local pkg_path="${pkg_base_path:?}/$pkg"
 
   if ! test -e "$pkg_path"; then
     error "Package $pkg not found!"
@@ -33,13 +57,14 @@ function build_pkg {
   fi
 
   # Set the output folder of the built package
-  export PKGDEST; PKGDEST="$(dirname "$repo_db")"
+  export PKGDEST; PKGDEST="$(dirname "${repo_db:?}")"
 
   # Build the package
+  msg "Building package $pkg"
   ( cd "$pkg_path" && makepkg --clean --syncdeps --needed --noconfirm )
 
-  # Stop if the build fails
-  test $? -eq 0 || return 2
+  # Store the build return code
+  local build_status=$?
 
   # Create/update the .SRCINFO file on local packages
   if ! [ -e "$pkg_path/.git" ]; then
@@ -52,14 +77,21 @@ function build_pkg {
       git commit -m ":package: $pkg: update .SRCINFO"
     fi
   else
-    # When on submodule repositories, usually the build process leaves some files behind such as
-    # caches or PKGBUILD version updates for VCS packages
-    ( cd "$pkg_path" && git reset --hard HEAD && git clean -fd )
+    # When on submodule repositories (non local package), usually the build process leaves some
+    # files behind such as caches or PKGBUILD version updates for VCS packages, so we will clean it
+    msg2 "Cleaning up..."
+    ( cd "$pkg_path" && git reset --hard HEAD > /dev/null && git clean -ffd > /dev/null )
   fi
+
+  # This line helps to separate when there are multiple packages being built
+  echo
+
+  # Stop if the build failed
+  test $build_status -eq 0 || return 2
 
   # Add the package output to the pacman repo
   while IFS= read -r built_pkg_name; do
-    repo-add --remove "$repo_db" "$built_pkg_name" 
+    repo-add --remove "$repo_db" "$built_pkg_name"
   done < <(cd "$pkg_path" && makepkg --packagelist)
 
   return 0

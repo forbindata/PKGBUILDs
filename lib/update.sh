@@ -5,18 +5,37 @@
 function cmd::update {
   local pkgs=() updated_packages=0
 
+  declare opt_all opt__list
+  parseopts "a" "all" "$@" || exit 1
+  cmd::update::validates_args "$@"
+
   # Read the packages from parameters or get all from the $pkg_base_path
-  if [ $# -gt 0 ]; then pkgs=("$@"); else mapfile -t pkgs < <(list_pkgs); fi
+  if $opt_all; then mapfile -t pkgs < <(list_pkgs); else pkgs=("${opt__list[@]}"); fi
 
   for pkg in "${pkgs[@]}"; do
     update_pkg "$pkg" && ((updated_packages+=1))
   done
 
   if [ $updated_packages -le 0 ]; then
-    success "No updates."
+    msg "No updates."
   else
-    success "$updated_packages package(s) updated."
+    msg "$updated_packages package(s) updated."
   fi
+}
+
+function cmd::update::validates_args {
+  validates_all_or_package_argument_list "cmd::update::help" "$opt_all" "${#opt__list[@]}"
+}
+
+function cmd::update::help {
+  echo ""
+  echo "Usage: $0 update [OPTIONS] [<PKG> ...]"
+  echo ""
+  echo "Update the specified PKGs by pulling the remote git submodule."
+  echo ""
+  echo "Options:"
+  echo "  -a, --all       Instead of passing each separate package as argument, you can use this"
+  echo "                  to update all packages from this git repository."
 }
 
 # Update a git repository under the base package.
@@ -24,7 +43,7 @@ function cmd::update {
 # Returns a success code if the repository has been updated.
 function update_pkg {
   local pkg=$1
-  local pkg_path="$pkg_base_path/$pkg"
+  local pkg_path="${pkg_base_path:?}/$pkg"
 
   # Let's not bother if that's not a git pkg
   test -e "$pkg_path/.git" || return 2
@@ -37,7 +56,7 @@ function update_pkg {
   # Return early if no updates for non-VCS packages
   ! is_vcs_package "$pkg" && test "$current_ver" = "$remote_ver" && return 2
 
-  # Updates on VCS packages are handled differently. Even if there are no 
+  # Updates on VCS packages are handled differently. Even if there are no
   # changes on the PKGBUILD, there might be changes on the VCS upstream repo,
   # so we need to check if it has updates as well.
   if is_vcs_package "$pkg"; then

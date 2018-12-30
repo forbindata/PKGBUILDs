@@ -5,12 +5,7 @@
 function cmd::add {
   local pkgs=() added_packages=0
 
-  # Read the packages from parameters or get all from the $pkg_base_path
-  if [ $# -le 0 ]; then
-    error "You need to specify at least one package in the arguments!"
-    cmd::add::help
-    exit 1
-  fi
+  cmd::add::validates_args "$@"
 
   # Read the packages from parameters
   pkgs=("$@")
@@ -20,17 +15,26 @@ function cmd::add {
   done
 
   if [ $added_packages -le 0 ]; then
-    success "No packages added."
+    msg "No packages added."
   else
-    success "$added_packages package(s) added."
+    msg "$added_packages package(s) added."
   fi
 }
 
+function cmd::add::validates_args {
+  if [ $# -le 0 ]; then
+    error "You need to specify at least one package in the arguments!"
+    cmd::add::help
+    exit 1
+  fi
+}
+
+
 function cmd::add::help {
   echo ""
-  echo "Usage: pkg add <url> [<url>, ...]"
+  echo "Usage: $0 add <URL> [<URL> ...]"
   echo ""
-  echo "Adds the package(s) to the git repository. the <url> parameter can be any URL in the"
+  echo "Adds the package(s) to the git repository. the <URL> parameter can be any URL in the"
   echo "following formats: https://, ssh:// or git://. If you want to add an AUR package, pass only"
   echo "the name and it will be assumed as an AUR repo."
 }
@@ -40,11 +44,11 @@ function add_pkg {
   local url=$1
 
   if is_package_installed "$url"; then
-    info "Package $url already installed, skipping..."
+    msg2 "Package $url already installed, skipping..."
     return
   fi
 
-  info "Downloading PKGBUILD for $url"
+  msg2 "Downloading PKGBUILD for $url"
 
   # If we're not using the absolute URL to the repo, then we assume it's AUR
   if ! [[ $url =~ ^(ssh|https):// ]]; then
@@ -54,7 +58,7 @@ function add_pkg {
   show_pkgbuild "$url"
   ask "Continue?" || return 2
 
-  ( cd "$pkg_base_path" && git submodule add "$url" )
+  ( cd "${pkg_base_path:?}" && git submodule add "$url" )
 
   git commit -m ":sparkles: packages: add $pkg"
 }

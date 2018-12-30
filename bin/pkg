@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 #
-# Arch Package Builder
+# Arch Package Builder helper. 
+# This small program helps you by having all your external AUR dependencies in one place, where you
+# can see them and once you trust it, recompile and distribute to your Arch cluster.
+#
+# Inspired by aurutils and pikaur
 
 # shellcheck disable=SC1091
 function main {
@@ -32,7 +36,7 @@ function main {
 
 function help {
   echo ""
-  echo "Usage: pkg <COMMAND> [ARGUMENTS]"
+  echo "Usage: $0 <COMMAND> [ARGUMENTS]"
   echo ""
   echo "A simple helper for managing PKGBUILDs from local or external sources."
   echo ""
