@@ -30,7 +30,7 @@ function main {
   case "$command" in
     add|build|install|update|upgrade|remove) "cmd::$command" "$@" ;;
     help) help ;;
-    *) echo "Invalid command!" && help && exit 1 ;;
+    *) error "Invalid command!" && help && exit 1 ;;
   esac
 }
 
