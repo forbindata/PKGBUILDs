@@ -47,6 +47,7 @@ function help {
   echo "  update     Update packages from their external sources"
   echo "  upgrade    Updates, builds and install the listed packages"
   echo "  remove     Uninstall and remove a package from this git repo"
+  echo "  help       Show this message"
 }
 
 main "$@"

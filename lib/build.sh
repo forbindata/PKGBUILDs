@@ -23,7 +23,11 @@ function cmd::build {
   if [ $built_packages -le 0 ]; then
     msg "No packages built."
   else
-    msg "$built_packages package(s) built."
+    if $opt_install; then
+      msg "$built_packages packages(s) built and installed."
+    else
+      msg "$built_packages package(s) built."
+    fi
   fi
 }
 
@@ -63,8 +67,13 @@ function build_pkg {
   msg "Building package $pkg"
   ( cd "$pkg_path" && makepkg --clean --syncdeps --needed --noconfirm )
 
-  # Store the build return code
-  local build_status=$?
+  # Stop if the build failed
+  test $? -eq 0 || return 2
+
+  # Add the package output to the pacman repo
+  while IFS= read -r built_pkg_name; do
+    repo-add --remove "$repo_db" "$built_pkg_name"
+  done < <(cd "$pkg_path" && makepkg --packagelist)
 
   # Create/update the .SRCINFO file on local packages
   if ! [ -e "$pkg_path/.git" ]; then
@@ -79,20 +88,11 @@ function build_pkg {
   else
     # When on submodule repositories (non local package), usually the build process leaves some
     # files behind such as caches or PKGBUILD version updates for VCS packages, so we will clean it
-    msg2 "Cleaning up..."
-    ( cd "$pkg_path" && git reset --hard HEAD > /dev/null && git clean -ffd > /dev/null )
+    git_clean_repo "$pkg_path" 
   fi
 
   # This line helps to separate when there are multiple packages being built
   echo
-
-  # Stop if the build failed
-  test $build_status -eq 0 || return 2
-
-  # Add the package output to the pacman repo
-  while IFS= read -r built_pkg_name; do
-    repo-add --remove "$repo_db" "$built_pkg_name"
-  done < <(cd "$pkg_path" && makepkg --packagelist)
 
   return 0
 }

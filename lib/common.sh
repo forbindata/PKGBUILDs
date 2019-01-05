@@ -52,6 +52,19 @@ function validates_all_or_package_argument_list {
   fi
 }
 
+# Clean a git repository to its HEAD and remove any untracked content
+# Be careful not to run this on the main repo or it will revert all uncommited changes
+function git_clean_repo {
+  local path=$1
+
+  # Ignore if it's not a git folder. Safety lock against destructive operation on non desirable
+  # directories.
+  ! test -e "$path/.git" && return 0
+
+  msg2 "Cleaning up git repo $path..."
+  ( cd "$path" && git reset --hard HEAD > /dev/null && git clean -ffd > /dev/null )
+}
+
 # Parses the options using getopt. This currently only works with boolean parameters, and you need
 # to specify both the short and long option names for them. Don't run this on a subshell or it won't
 # work. When parsing a parameter, it will set a global variable named opt_<your_long_opt_name> with

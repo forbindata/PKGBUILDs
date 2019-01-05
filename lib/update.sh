@@ -45,6 +45,11 @@ function update_pkg {
   local pkg=$1
   local pkg_path="${pkg_base_path:?}/$pkg"
 
+  if ! [ -e "$pkg_path" ]; then
+    error "Package $pkg not found!"
+    return 1
+  fi
+
   # Let's not bother if that's not a git pkg
   test -e "$pkg_path/.git" || return 2
 
@@ -73,7 +78,11 @@ function update_pkg {
 
   # Show diff before merging
   ask "Proceed?" || return 2
-  ( cd "$pkg_path" && git merge origin/master )
+  ( cd "$pkg_path" && git merge origin/master && git rev-parse --short HEAD )
+
+  # Commit the update locally
+  local current_ver; current_ver=$(cd "$pkg_path" && git rev-parse --short HEAD)
+  ( git add "$pkg_path" && git commit -m "$pkg: update to $current_ver" )
 
   # Signal that means "there has been changes"
   return 0
@@ -120,8 +129,7 @@ function vcs_package_has_updates {
   last=$(_get_current_vcs_version)
 
   # Clear all version changes done to the PKGBUILD by makepkg
-  ( cd "$pkg_base_path/$pkg" && test -e ".git" && \
-    git reset --hard HEAD > /dev/null 2>&1 )
+  git_clean_repo "$pkg_path" 
 
   test "$current" != "$last"
 }
