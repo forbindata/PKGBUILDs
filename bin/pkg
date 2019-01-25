@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Arch Package Builder helper. 
+# Arch Package Builder helper.
 # This small program helps you by having all your external AUR dependencies in one place, where you
 # can see them and once you trust it, recompile and distribute to your Arch cluster.
 #
