@@ -65,6 +65,16 @@ function git_clean_repo {
   ( cd "$path" && git reset --hard HEAD > /dev/null && git clean -ffd > /dev/null )
 }
 
+# Get the current built version of that package on the repo
+function get_repo_package_version {
+  local pkg=$1
+  local repo_path=$2
+
+  repo_file=$(basename "$repo_path")
+  repo_name=${repo_file%%.*}
+  pacman -Sl "$repo_name" | awk '{ print $2":"$3 }' | grep "^$pkg:" | sed 's/^.*://'
+}
+
 # Parses the options using getopt. This currently only works with boolean parameters, and you need
 # to specify both the short and long option names for them. Don't run this on a subshell or it won't
 # work. When parsing a parameter, it will set a global variable named opt_<your_long_opt_name> with

@@ -5,13 +5,15 @@
 function cmd::add {
   local pkgs=() added_packages=0
 
+  declare opt_nocommit opt__list
+  parseopts "n" "nocommit" "$@" || exit 1
   cmd::add::validates_args "$@"
 
   # Read the packages from parameters
-  pkgs=("$@")
+  pkgs=("${opt__list[@]}")
 
   for pkg in "${pkgs[@]}"; do
-    add_pkg "$pkg" && ((added_packages+=1))
+    add_pkg "$pkg" "$opt_nocommit" && ((added_packages+=1))
   done
 
   if [ $added_packages -le 0 ]; then
@@ -22,7 +24,7 @@ function cmd::add {
 }
 
 function cmd::add::validates_args {
-  if [ $# -le 0 ]; then
+  if [ "${#opt__list[@]}" -le 0 ]; then
     error "You need to specify at least one package in the arguments!"
     cmd::add::help
     exit 1
@@ -32,16 +34,22 @@ function cmd::add::validates_args {
 
 function cmd::add::help {
   echo ""
-  echo "Usage: $0 add <URL> [<URL> ...]"
+  echo "Usage: $0 add [OPTIONS] <URL> [<URL> ...]"
   echo ""
   echo "Adds the package(s) to the git repository. the <URL> parameter can be any URL in the"
   echo "following formats: https://, ssh:// or git://. If you want to add an AUR package, pass only"
   echo "the name and it will be assumed as an AUR repo."
+  echo ""
+  echo "Options:"
+  echo "  -n, --nocommit   Don't commit changes on the git repository."
 }
 
 # Clones a git repo onto $pkg_base_path
 function add_pkg {
   local url=$1
+  local nocommit=$2
+
+  msg "Adding $url"
 
   if is_package_installed "$url"; then
     msg2 "Package $url already installed, skipping..."
@@ -60,7 +68,9 @@ function add_pkg {
 
   ( cd "${pkg_base_path:?}" && git submodule add "$url" )
 
-  git commit -m ":sparkles: packages: add $pkg"
+  test -z "$nocommit" && git commit -m ":sparkles: packages: add $pkg"
+
+  msg "Added $pkg"
 }
 
 function is_package_installed {
