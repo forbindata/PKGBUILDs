@@ -74,11 +74,11 @@ function update_pkg {
   # Ask before proceeding. Resets the branch beforehand to avoid problems on
   # merging. Ideally submodule repositories should not be changed locally.
   ask "New update for package $pkg. Continue?" || return 2
-  ( cd "$pkg_path" && git reset --hard HEAD && git diff origin/master )
+  ( cd "$pkg_path" && git reset --hard HEAD && git checkout master && git diff origin/master )
 
-  # Show diff before merging
+  # Confirm the diff before merging
   ask "Proceed?" || return 2
-  ( cd "$pkg_path" && git merge origin/master && git rev-parse --short HEAD )
+  ( cd "$pkg_path" && git merge origin/master )
 
   # Commit the update locally
   local current_ver; current_ver=$(cd "$pkg_path" && git rev-parse --short HEAD)
@@ -100,6 +100,8 @@ function vcs_package_has_updates {
 
   local pkg_path="$pkg_base_path/$pkg"
 
+  msg "Checking for VCS updates for $pkg..."
+
   # Evaluates the PKGBUILD to get the version
   # Copied from https://github.com/AladW/aurutils/blob/master/lib/aur-srcver
   #
@@ -118,14 +120,18 @@ function vcs_package_has_updates {
     '
   }
 
-  # Get the current version
-  current=$(_get_current_vcs_version)
+  # Get the current built version on the repo
+  # shellcheck disable=SC2154
+  repo_file=$(basename "$repo_db")
+  repo_name=${repo_file%%.*}
+  current=$(pacman -Sl "$repo_name" | \
+    awk '{ print $2":"$3 }' | grep "^$pkg:" | sed 's/^.*://')
 
   # Run makepkg to update the PKGBUILD pkgver
   ( cd "$pkg_path" && makepkg --nobuild --clean --cleanbuild --nocheck \
     --needed --rmdeps --noconfirm --noprogressbar > /dev/null 2>&1 )
 
-  # Now get the version again: it should have been updated, if changed
+  # Now get the version on the PKGBUILD: it should have been updated, if changed
   last=$(_get_current_vcs_version)
 
   # Clear all version changes done to the PKGBUILD by makepkg
