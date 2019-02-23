@@ -52,7 +52,7 @@ function update_pkg {
     return 1
   fi
 
-  # Signal 0 means "there has some changes, please rebuild"
+  # Signal 0 means "there has been some changes, please rebuild"
   update_remote "$pkg" "$pkg_path" "$nocommit" && return 0
   update_upstream_vcs "$pkg" && return 0
 
@@ -66,12 +66,12 @@ function update_remote {
   # Let's not bother if that's not a git pkg
   test -e "$pkg_path/.git" || return 2
 
-  msg "Checking for updates for $pkg"
+  msg "Checking updates for $pkg"
 
   # Fetch from remote
   ( cd "$pkg_path" && git fetch origin )
   local current_ver; current_ver=$(cd "$pkg_path" && git rev-parse @)
-  local remote_ver; remote_ver=$(cd "$pkg_path" && git rev-parse origin)
+  local remote_ver; remote_ver=$(cd "$pkg_path" && git rev-parse origin/master)
 
   # If versions are equal, no updates
   test "$current_ver" = "$remote_ver" && return 2
@@ -79,7 +79,8 @@ function update_remote {
   # Ask before proceeding. Resets the branch first to avoid problems on merging. Ideally, submodule
   # repositories should never be changed locally.
   ask "New update for package $pkg. Continue?" || return 2
-  ( cd "$pkg_path" && git reset --hard HEAD && git checkout master && git diff origin/master )
+  ( cd "$pkg_path" && git reset --hard HEAD && git checkout master && \
+    git diff master..origin/master )
 
   # Confirm the diff before merging
   ask "Proceed?" || return 2
@@ -116,7 +117,7 @@ function vcs_package_has_updates {
 
   local pkg_path="$pkg_base_path/$pkg"
 
-  msg "Checking for VCS updates for $pkg..."
+  msg "Checking VCS updates for $pkg..."
 
   # Get the current built version on the repo
   current=$(get_repo_package_version "$pkg" "${repo_db:?}")
