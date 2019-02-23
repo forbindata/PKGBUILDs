@@ -88,7 +88,7 @@ function build_pkg {
   else
     # When on submodule repositories (non local package), usually the build process leaves some
     # files behind such as caches or PKGBUILD version updates for VCS packages, so we will clean it
-    git_clean_repo "$pkg_path" 
+    git_clean_repo "$pkg_path"
   fi
 
   # This line helps to separate when there are multiple packages being built
