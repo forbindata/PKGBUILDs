@@ -5,19 +5,19 @@
 function cmd::build {
   local pkgs=() built_packages=0
 
-  declare opt_all opt_install opt__list
-  parseopts "ai" "all,install" "$@" || exit 1
+  declare opt_all opt_install opt_force opt__list
+  parseopts "aif" "all,install,force" "$@" || exit 1
   cmd::build::validates_args "$@"
 
   # Read the packages from parameters or get all from the $pkg_base_path
   if $opt_all; then mapfile -t pkgs < <(list_pkgs); else pkgs=("${opt__list[@]}"); fi
 
   for pkg in "${pkgs[@]}"; do
-    build_pkg "$pkg" && ((built_packages+=1))
+    build_pkg "$pkg" "$opt_force" && ((built_packages+=1))
   done
 
   if $opt_install && [ $built_packages -gt 0 ]; then
-    install_pkgs "${pkgs[@]}"
+    install_pkgs "$opt_force" "${pkgs[@]}"
   fi
 
   if [ $built_packages -le 0 ]; then
@@ -45,6 +45,7 @@ function cmd::build::help {
   echo "  -a, --all       Instead of passing each separate package as argument, you can use this"
   echo "                  to build all packages from this git repository."
   echo "  -i, --install   After building all specified packages, install them with $0 install."
+  echo "  -f, --force     Force building a package, even if it's been built."
 }
 
 # Build a single package
@@ -52,6 +53,7 @@ function cmd::build::help {
 # Returns a success code when the build succeeds
 function build_pkg {
   local pkg=$1
+  local force=$2
 
   local pkg_path="${pkg_base_path:?}/$pkg"
 
@@ -64,8 +66,9 @@ function build_pkg {
   export PKGDEST; PKGDEST="$(dirname "${repo_db:?}")"
 
   # Build the package
+  test "$force" = "true" && local force_param="--force"
   msg "Building package $pkg"
-  ( cd "$pkg_path" && makepkg --clean --syncdeps --needed --noconfirm )
+  ( cd "$pkg_path" && makepkg --clean --syncdeps --needed --noconfirm $force_param )
 
   # Stop if the build failed
   test $? -eq 0 || return 2
