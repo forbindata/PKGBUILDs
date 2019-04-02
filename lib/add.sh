@@ -68,7 +68,7 @@ function add_pkg {
 
   ( cd "${pkg_base_path:?}" && git submodule add "$url" )
 
-  test -z "$nocommit" && git commit -m ":sparkles: packages: add $pkg"
+  test "$nocommit" = "false" && git commit -m ":sparkles: packages: add $pkg"
 
   msg "Added $pkg"
 }
