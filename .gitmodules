@@ -34,3 +34,6 @@
 [submodule "pkgs/wrk"]
 	path = pkgs/wrk
 	url = https://aur.archlinux.org/wrk.git
+[submodule "pkgs/nodenv"]
+	path = pkgs/nodenv
+	url = https://aur.archlinux.org/nodenv.git
