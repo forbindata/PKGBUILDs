@@ -43,3 +43,6 @@
 [submodule "pkgs/rbenv"]
 	path = pkgs/rbenv
 	url = https://aur.archlinux.org/rbenv.git
+[submodule "pkgs/ruby-build-git"]
+	path = pkgs/ruby-build-git
+	url = https://aur.archlinux.org/ruby-build-git.git
