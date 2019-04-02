@@ -40,3 +40,6 @@
 [submodule "pkgs/nodenv-node-build-git"]
 	path = pkgs/nodenv-node-build-git
 	url = https://aur.archlinux.org/nodenv-node-build-git.git
+[submodule "pkgs/rbenv"]
+	path = pkgs/rbenv
+	url = https://aur.archlinux.org/rbenv.git
