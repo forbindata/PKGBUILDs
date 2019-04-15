@@ -1,0 +1,52 @@
+# Maintainer: Daniel Pereira <daniel@garajau.com.br>
+# Contributor: Jan Alexander Steffens (heftig) <jan.steffens@gmail.com>
+# Contributor: Ionut Biru <ibiru@archlinux.org>
+# Contributor: Michael Kanis <mkanis_at_gmx_dot_de>
+# Contributor: jSparber <julian@sparber.net>
+
+_pkgname=mutter
+pkgname=mutter-slim-git
+pkgver=3.32.0+56+g2c1a951b6
+pkgrel=1
+pkgdesc="A window manager for GNOME"
+url="https://gitlab.gnome.org/GNOME/mutter"
+arch=(x86_64)
+license=(GPL)
+depends=(dconf gobject-introspection-runtime gsettings-desktop-schemas libcanberra
+         startup-notification zenity libsm gnome-desktop upower libxkbcommon-x11
+         gnome-settings-daemon libgudev libinput pipewire xorg-server-xwayland)
+makedepends=(gobject-introspection git egl-wayland meson xorg-server)
+checkdepends=(xorg-server-xvfb)
+groups=(gnome)
+replaces=('mutter-wayland' 'mutter')
+conflicts=('mutter-wayland' 'mutter')
+provides=("mutter=${pkgver}")
+source=("git+https://gitlab.gnome.org/GNOME/mutter.git"
+        "hideTitlebar.patch")
+sha256sums=('SKIP'
+            '0f57441f08f7c58d198c6c9b70bcffd05e84b54b2a048e032babd836d8967bcb')
+
+pkgver() {
+  cd $_pkgname
+  git describe --tags | sed 's/-/+/g'
+}
+
+prepare() {
+  cd $_pkgname || exit 1
+
+  # Patch by jSparber
+  # See: https://aur.archlinux.org/packages/mutter-hide-legacy-decorations/
+  patch -p1 -i "$srcdir/hideTitlebar.patch"
+}
+
+build() {
+  arch-meson $_pkgname build \
+    -D egl_device=true \
+    -D wayland_eglstream=true \
+    -D installed_tests=false
+  ninja -C build
+}
+
+package() {
+  DESTDIR="$pkgdir" meson install -C build
+}

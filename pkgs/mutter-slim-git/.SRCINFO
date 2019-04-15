@@ -1,0 +1,41 @@
+pkgbase = mutter-slim-git
+	pkgdesc = A window manager for GNOME
+	pkgver = 3.32.0+56+g2c1a951b6
+	pkgrel = 1
+	url = https://gitlab.gnome.org/GNOME/mutter
+	arch = x86_64
+	groups = gnome
+	license = GPL
+	checkdepends = xorg-server-xvfb
+	makedepends = gobject-introspection
+	makedepends = git
+	makedepends = egl-wayland
+	makedepends = meson
+	makedepends = xorg-server
+	depends = dconf
+	depends = gobject-introspection-runtime
+	depends = gsettings-desktop-schemas
+	depends = libcanberra
+	depends = startup-notification
+	depends = zenity
+	depends = libsm
+	depends = gnome-desktop
+	depends = upower
+	depends = libxkbcommon-x11
+	depends = gnome-settings-daemon
+	depends = libgudev
+	depends = libinput
+	depends = pipewire
+	depends = xorg-server-xwayland
+	provides = mutter=3.32.0+56+g2c1a951b6
+	conflicts = mutter-wayland
+	conflicts = mutter
+	replaces = mutter-wayland
+	replaces = mutter
+	source = git+https://gitlab.gnome.org/GNOME/mutter.git
+	source = hideTitlebar.patch
+	sha256sums = SKIP
+	sha256sums = 0f57441f08f7c58d198c6c9b70bcffd05e84b54b2a048e032babd836d8967bcb
+
+pkgname = mutter-slim-git
+
