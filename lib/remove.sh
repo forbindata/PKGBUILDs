@@ -93,5 +93,5 @@ function remove_from_git_repo {
   rm -rf ".git/modules/$pkg_path"
 
   # Then commit that change
-  test -z "$nocommit" && git commit -m ":fire: packages: remove $pkg"
+  test "$nocommit" = "false" && git commit -m ":fire: packages: remove $pkg"
 }
