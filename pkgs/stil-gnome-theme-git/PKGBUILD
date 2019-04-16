@@ -1,0 +1,31 @@
+# Maintainer: Daniel Pereira <daniel@garajau.com.br>
+
+pkgname=stil-gnome-theme-git
+pkgver=1.0.0.r0.g711ffaf
+pkgrel=1
+pkgdesc="A custom theme for GNOME desktop environment"
+url="https://github.com/kriansa/stil-gnome-theme"
+arch=(any)
+license=(custom:BSD)
+depends=(gnome-shell)
+provides=(stil-gnome-theme)
+conflicts=(stil-gnome-theme)
+source=(git://github.com/kriansa/stil-gnome-theme)
+sha256sums=(SKIP)
+
+pkgver() {
+  cd stil-gnome-theme
+  git describe --long | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
+}
+
+package() {
+  install -d "$pkgdir/usr/share/icons/stil-icons"
+  install -d "$pkgdir/usr/share/themes/stil-shell-theme"
+
+  # Get into the cloned source git repository
+  cd stil-gnome-theme
+
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  cp -r icons/* "$pkgdir/usr/share/icons/stil-icons"
+  cp -r theme/* "$pkgdir/usr/share/themes/stil-shell-theme"
+}

@@ -1,0 +1,15 @@
+pkgbase = stil-gnome-theme-git
+	pkgdesc = A custom theme for GNOME desktop environment
+	pkgver = 1.0.0.r0.g711ffaf
+	pkgrel = 1
+	url = https://github.com/kriansa/stil-gnome-theme
+	arch = any
+	license = custom:BSD
+	depends = gnome-shell
+	provides = stil-gnome-theme
+	conflicts = stil-gnome-theme
+	source = git://github.com/kriansa/stil-gnome-theme
+	sha256sums = SKIP
+
+pkgname = stil-gnome-theme-git
+
