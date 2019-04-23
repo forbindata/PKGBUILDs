@@ -1,6 +1,6 @@
 pkgbase = mutter-slim-git
 	pkgdesc = A window manager for GNOME
-	pkgver = 3.32.0+56+g2c1a951b6
+	pkgver = 3.32.1+32+g251fa024c
 	pkgrel = 1
 	url = https://gitlab.gnome.org/GNOME/mutter
 	arch = x86_64
@@ -27,7 +27,7 @@ pkgbase = mutter-slim-git
 	depends = libinput
 	depends = pipewire
 	depends = xorg-server-xwayland
-	provides = mutter=3.32.0+56+g2c1a951b6
+	provides = mutter=3.32.1+32+g251fa024c
 	conflicts = mutter-wayland
 	conflicts = mutter
 	replaces = mutter-wayland
