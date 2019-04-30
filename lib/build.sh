@@ -86,7 +86,8 @@ function build_pkg {
     local changed; changed=$(git diff --name-only "$pkg_path/.SRCINFO" 2> /dev/null)
     if [ "$changed" != "" ]; then
       git add "$pkg_path/.SRCINFO"
-      git commit -m ":package: $pkg: update .SRCINFO"
+      is_vcs_package "$pkg" && git add "$pkg_path/PKGBUILD"
+      git commit -m "$pkg: update .SRCINFO"
     fi
   else
     # When on submodule repositories (non local package), usually the build process leaves some
