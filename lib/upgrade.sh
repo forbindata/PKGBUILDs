@@ -28,7 +28,8 @@ function cmd::upgrade {
     build_pkg "$pkg" && built_pkgs+=("$pkg") || failed_pkgs+=("$pkg")
   done
 
-  install_pkgs "${built_pkgs[@]}"
+  # Install packages with --force option
+  install_pkgs "true" "${built_pkgs[@]}"
 
   # Then show the errors, if any
   if [ "${#failed_pkgs[@]}" -gt 0 ]; then
