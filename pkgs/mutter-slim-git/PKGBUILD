@@ -6,7 +6,7 @@
 
 _pkgname=mutter
 pkgname=mutter-slim-git
-pkgver=3.32.1+73+gbf8bc65cc
+pkgver=3.32.1+75+g7738b5c00
 pkgrel=1
 pkgdesc="A window manager for GNOME"
 url="https://gitlab.gnome.org/GNOME/mutter"
