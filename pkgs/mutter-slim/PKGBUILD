@@ -5,8 +5,8 @@
 # Contributor: jSparber <julian@sparber.net>
 
 _pkgname=mutter
-pkgname=mutter-slim-git
-pkgver=3.33.2+20+gb1ea76894
+pkgname=mutter-slim
+pkgver=3.32.2
 pkgrel=1
 pkgdesc="A window manager for GNOME"
 url="https://gitlab.gnome.org/GNOME/mutter"
@@ -18,10 +18,11 @@ depends=(dconf gobject-introspection-runtime gsettings-desktop-schemas libcanber
 makedepends=(gobject-introspection git egl-wayland meson xorg-server)
 checkdepends=(xorg-server-xvfb)
 groups=(gnome)
-replaces=('mutter-wayland' 'mutter')
-conflicts=('mutter-wayland' 'mutter')
+replaces=('mutter')
+conflicts=('mutter')
 provides=("mutter=${pkgver}")
-source=("git+https://gitlab.gnome.org/GNOME/mutter.git"
+_commit=189f71f5d1e70dd16796418d568d3e3e4cad49e0 # tags/3.32.2
+source=("git+https://gitlab.gnome.org/GNOME/mutter.git#commit=$_commit"
         "hideTitlebar.patch")
 sha256sums=('SKIP'
             '0f57441f08f7c58d198c6c9b70bcffd05e84b54b2a048e032babd836d8967bcb')
