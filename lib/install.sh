@@ -14,6 +14,9 @@ function cmd::install {
 
   if install_pkgs "$opt_force" "${pkgs[@]}"; then
     msg "${#pkgs[@]} package(s) installed."
+  else
+    error "Installation failed. Please, check the logs."
+    return 1
   fi
 }
 

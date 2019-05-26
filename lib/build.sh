@@ -16,18 +16,23 @@ function cmd::build {
     build_pkg "$pkg" "$opt_force" && ((built_packages+=1))
   done
 
-  if $opt_install && [ $built_packages -gt 0 ]; then
-    install_pkgs "$opt_force" "${pkgs[@]}"
-  fi
-
   if [ $built_packages -le 0 ]; then
     msg "No packages built."
+    return
+  elif [ $built_packages -lt ${#pkgs[@]} ]; then
+    error "Some package(s) could not be built. Please, check the logs."
+    return 1
+  fi
+
+  if $opt_install && ! install_pkgs "$opt_force" "${pkgs[@]}"; then
+    error "Installation failed. Please check the logs."
+    return 1
+  fi
+
+  if $opt_install; then
+    msg "$built_packages package(s) built and installed successfully!"
   else
-    if $opt_install; then
-      msg "$built_packages packages(s) built and installed."
-    else
-      msg "$built_packages package(s) built."
-    fi
+    msg "$built_packages package(s) built."
   fi
 }
 
