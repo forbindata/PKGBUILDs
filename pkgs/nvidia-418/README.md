@@ -31,3 +31,7 @@ nvidia-modeset: WARNING: GPU:0: Lost display notification (0:0x00000000); contin
 
 The workaround is a PITA. I need to plug in my monitor into the onboard VGA, then wait for Xorg to
 start, then I can re-plug it on the NVIDIA card. This is the worst.
+
+## References
+
+* [Issue on Nvidia forums](https://devtalk.nvidia.com/default/topic/1052207/linux/nvidia-430-14-monitor-disconnects-when-x-starts/)
