@@ -1,0 +1,2 @@
+# Ignore nvidia installer binaries
+NVIDIA-*.run
