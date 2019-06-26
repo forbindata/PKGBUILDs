@@ -6,7 +6,7 @@
 
 _pkgname=mutter
 pkgname=mutter-slim
-pkgver=3.32.2
+pkgver=3.32.2+24+g5efb11aca
 pkgrel=1
 pkgdesc="A window manager for GNOME"
 url="https://gitlab.gnome.org/GNOME/mutter"
@@ -18,10 +18,11 @@ depends=(dconf gobject-introspection-runtime gsettings-desktop-schemas libcanber
 makedepends=(gobject-introspection git egl-wayland meson xorg-server)
 checkdepends=(xorg-server-xvfb)
 groups=(gnome)
+install=mutter.install
 replaces=('mutter')
 conflicts=('mutter')
 provides=("mutter=${pkgver}")
-_commit=189f71f5d1e70dd16796418d568d3e3e4cad49e0 # tags/3.32.2
+_commit=5efb11acadd9e344d15fd2e6ce1f6180a541975b # gnome-3-32
 source=("git+https://gitlab.gnome.org/GNOME/mutter.git#commit=$_commit"
         "hideTitlebar.patch")
 sha256sums=('SKIP'
@@ -38,6 +39,9 @@ prepare() {
   # Patch by jSparber
   # See: https://aur.archlinux.org/packages/mutter-hide-legacy-decorations/
   patch -p1 -i "$srcdir/hideTitlebar.patch"
+
+  # rt-scheduler experimental feature
+  git cherry-pick -n dae2c1d420ed272710ac55b7a00f6787e5c0e762
 }
 
 build() {
