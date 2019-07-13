@@ -1,7 +1,7 @@
 pkgbase = nvidia
 	pkgdesc = NVIDIA drivers for linux
 	pkgver = 418.74
-	pkgrel = 7
+	pkgrel = 8
 	url = http://www.nvidia.com/
 	arch = x86_64
 	license = custom
@@ -11,8 +11,10 @@ pkgbase = nvidia
 	makedepends = linux-headers
 	options = !strip
 	source = http://us.download.nvidia.com/XFree86/Linux-x86_64/418.74/NVIDIA-Linux-x86_64-418.74.run
+	source = kernel-52.patch
 	source = fs62142.patch
 	sha512sums = 485d94f0a328c117f86c7b2d8e14885aa1e498755bcc7285aaba1cf5e8f4672feaece7c87a7d0f835c55ff4022d0be6b023ffee262f0a3073ccf88ca1f39201f
+	sha512sums = 6ac8601f04f3247391bea20da42427616879716ab717c5bd2ecc3256bd05d8a566240e7d77968da087517f0eee93bb840ef912fcf2a14ced6c971211387000bd
 	sha512sums = df949debf9fed92b3c58322c02685fb344bbfff2920557e7d55ed3f70559f48cd6199bc85e2af170b7e56797f3e9881a53eab8c411f21e75f5abec26eaa47752
 
 pkgname = nvidia-418
