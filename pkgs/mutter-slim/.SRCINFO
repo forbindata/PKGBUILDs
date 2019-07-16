@@ -1,6 +1,6 @@
 pkgbase = mutter-slim
 	pkgdesc = A window manager for GNOME
-	pkgver = 3.32.2+24+g5efb11aca
+	pkgver = 3.32.2+40+gccab0f470
 	pkgrel = 1
 	url = https://gitlab.gnome.org/GNOME/mutter
 	install = mutter.install
@@ -28,10 +28,10 @@ pkgbase = mutter-slim
 	depends = libinput
 	depends = pipewire
 	depends = xorg-server-xwayland
-	provides = mutter=3.32.2+24+g5efb11aca
+	provides = mutter=3.32.2+40+gccab0f470
 	conflicts = mutter
 	replaces = mutter
-	source = git+https://gitlab.gnome.org/GNOME/mutter.git#commit=5efb11acadd9e344d15fd2e6ce1f6180a541975b
+	source = git+https://gitlab.gnome.org/GNOME/mutter.git#commit=ccab0f470dcc556073754c8adf9413819d22cc14
 	source = hideTitlebar.patch
 	sha256sums = SKIP
 	sha256sums = 0f57441f08f7c58d198c6c9b70bcffd05e84b54b2a048e032babd836d8967bcb
