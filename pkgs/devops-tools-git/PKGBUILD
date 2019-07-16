@@ -2,7 +2,7 @@
 
 _pkgname=devops-tools
 pkgname=devops-tools-git
-pkgver=1.0.0.r2.g6a95e43
+pkgver=1.0.0.r3.g0e6cd41
 pkgrel=1
 pkgdesc="A set of tools for working with server automation."
 url="https://github.com/kriansa/devops-tools"
