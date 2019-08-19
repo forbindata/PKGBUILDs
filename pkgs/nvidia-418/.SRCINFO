@@ -9,6 +9,9 @@ pkgbase = nvidia
 	makedepends = libglvnd
 	makedepends = linux
 	makedepends = linux-headers
+	provides = nvidia=418.74
+	conflicts = nvidia
+	replaces = nvidia
 	options = !strip
 	source = http://us.download.nvidia.com/XFree86/Linux-x86_64/418.74/NVIDIA-Linux-x86_64-418.74.run
 	source = kernel-52.patch
@@ -24,6 +27,7 @@ pkgname = nvidia-418
 	depends = libglvnd
 	provides = nvidia=418.74
 	conflicts = nvidia
+	conflicts = nvidia
 
 pkgname = nvidia-dkms-418
 	pkgdesc = NVIDIA driver sources for linux
@@ -33,5 +37,6 @@ pkgname = nvidia-dkms-418
 	optdepends = linux-headers: Build the module for Arch kernel
 	optdepends = linux-lts-headers: Build the module for LTS Arch kernel
 	provides = nvidia=418.74
+	conflicts = nvidia
 	conflicts = nvidia
 
