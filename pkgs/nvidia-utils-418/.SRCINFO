@@ -26,7 +26,9 @@ pkgname = nvidia-utils-418
 	provides = opengl-driver
 	provides = nvidia-libgl
 	conflicts = nvidia-libgl
+	conflicts = nvidia-utils
 	replaces = nvidia-libgl
+	replaces = nvidia-utils
 
 pkgname = opencl-nvidia-418
 	pkgdesc = OpenCL implemention for NVIDIA
