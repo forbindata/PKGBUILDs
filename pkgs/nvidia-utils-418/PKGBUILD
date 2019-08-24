@@ -62,9 +62,9 @@ package_nvidia-utils-418() {
     optdepends=('nvidia-settings: configuration tool'
                 'xorg-server-devel: nvidia-xconfig'
                 'opencl-nvidia: OpenCL support')
-    conflicts=('nvidia-libgl')
+    conflicts=('nvidia-libgl' 'nvidia-utils')
     provides=("nvidia-utils=${pkgver}" 'vulkan-driver' 'opengl-driver' 'nvidia-libgl')
-    replaces=('nvidia-libgl')
+    replaces=('nvidia-libgl' 'nvidia-utils')
     install="nvidia-utils.install"
 
     cd "${_pkg}"

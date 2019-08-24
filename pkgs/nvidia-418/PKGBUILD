@@ -12,6 +12,9 @@ pkgdesc="NVIDIA drivers for linux"
 arch=('x86_64')
 url="http://www.nvidia.com/"
 makedepends=("nvidia-utils=${pkgver}" 'libglvnd' 'linux' 'linux-headers')
+replaces=('nvidia')
+conflicts=('nvidia')
+provides=("nvidia=${pkgver}")
 license=('custom')
 options=('!strip')
 _pkg="NVIDIA-Linux-x86_64-${pkgver}"
