@@ -43,3 +43,6 @@
 [submodule "pkgs/ruby-build-git"]
 	path = pkgs/ruby-build-git
 	url = https://aur.archlinux.org/ruby-build-git.git
+[submodule "pkgs/ansible-bundler"]
+	path = pkgs/ansible-bundler
+	url = ssh://aur@aur.archlinux.org/ansible-bundler.git
