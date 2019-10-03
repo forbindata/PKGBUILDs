@@ -46,3 +46,6 @@
 [submodule "pkgs/ansible-bundler"]
 	path = pkgs/ansible-bundler
 	url = ssh://aur@aur.archlinux.org/ansible-bundler.git
+[submodule "pkgs/emacs-git"]
+	path = pkgs/emacs-git
+	url = https://aur.archlinux.org/emacs-git.git
