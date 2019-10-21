@@ -37,7 +37,7 @@ function cmd::remove::help {
   echo ""
   echo "Usage: $0 remove [OPTIONS] [<PKG> ...]"
   echo ""
-  echo "Remove the specified PKGs."
+  echo "Remove the specified PKGs from both the git and the pacman repositories."
   echo ""
   echo "Options:"
   echo "  -a, --all        Instead of passing each separate package as argument, you can use this"
@@ -50,22 +50,52 @@ function uninstall_pkgs {
   test $# -gt 0 && sudo pacman -Rsc --noconfirm "$@"
 }
 
+function package_in_local_repo {
+  local pkg=$1
+  local repo_name; repo_name=$(basename -s .db.tar.gz "${repo_db:?}")
+
+  pacman -Sl "$repo_name" | grep "$repo_name $pkg " > /dev/null 2>&1
+}
+
+function built_package_path {
+  local pkg=$1
+  local repo_name; repo_name=$(basename -s .db.tar.gz "${repo_db:?}")
+  local repo_dir; repo_dir=$(dirname "${repo_db:?}")
+
+  local pkgver; pkgver="$(pacman -Sl "$repo_name" | grep "$repo_name $pkg " |\
+    awk '{ print $3 }' 2> /dev/null)"
+
+  local pkgarch; pkgarch=$(pacman -Si "$pkg" | grep Architecture | awk '{ print $3 }')
+
+  echo "$repo_dir/$pkg-$pkgver-$pkgarch.pkg.tar.xz"
+}
+
 # Remove a single package from this git repo
 function remove_pkg_repo {
   local pkg=$1
   local nocommit=$2
 
+  local removed=0
   local pkg_path="${pkg_base_path:?}/$pkg"
 
-  if ! [ -d "$pkg_path" ]; then
-    error "Package $pkg not found."
-    return 2
+  if [ -d "$pkg_path" ]; then
+    remove_from_git_repo "$pkg" "$pkg_path" "$nocommit"
+    msg "Package $pkg removed from git repository."
+    removed=1
   fi
 
-  remove_from_local_repo "$pkg" "$pkg_path"
-  remove_from_git_repo "$pkg" "$pkg_path" "$nocommit"
+  if package_in_local_repo "$pkg"; then
+    remove_from_local_repo "$pkg" "$pkg_path"
+    msg "Package $pkg removed from local repository."
+    removed=1
+  fi
 
-  msg "Package $pkg removed."
+  if [ $removed -eq 0 ]; then
+    error "Package $pkg not present on git/local repos."
+    return 1
+  fi
+
+  return 0
 }
 
 function remove_from_local_repo {
@@ -74,14 +104,16 @@ function remove_from_local_repo {
   # Set the output folder of the built package
   export PKGDEST; PKGDEST="$(dirname "${repo_db:?}")"
 
-  # Remove the package from the repo, if present
-  test "$(get_repo_package_version "$pkg" "${repo_db:?}")" != "" && \
-    repo-remove "${repo_db:?}" "$pkg"
-
   # Remove the built package files
-  while IFS= read -r built_pkg_name; do
-    test -f "$built_pkg_name" && rm "$built_pkg_name"
-  done < <(cd "$pkg_path" && makepkg --packagelist)
+  local pkgfile; pkgfile="$(built_package_path "$pkg")"
+  test -f "$pkgfile" && rm -f "$pkgfile"
+
+  # Remove the package from the repo, if present
+  repo-remove "${repo_db:?}" "$pkg"
+
+  # Then reload the repo cache locally
+  # TODO: We should only update the $repo_db repo, not all of them
+  sudo pacman -Sy
 }
 
 function remove_from_git_repo {
@@ -89,8 +121,11 @@ function remove_from_git_repo {
 
   # Remove the git submodule completely
   git submodule deinit -f "$pkg_path"
-  git rm -f "$pkg_path"
+  git rm -rf "$pkg_path"
   rm -rf ".git/modules/$pkg_path"
+
+  # Remove the package locally
+  rm -rf "$pkg_path"
 
   # Then commit that change
   test "$nocommit" = "false" && git commit -m ":fire: packages: remove $pkg"
