@@ -49,3 +49,6 @@
 [submodule "pkgs/beancount"]
 	path = pkgs/beancount
 	url = https://aur.archlinux.org/beancount.git
+[submodule "pkgs/python-magic-ahupp"]
+	path = pkgs/python-magic-ahupp
+	url = https://aur.archlinux.org/python-magic-ahupp.git
