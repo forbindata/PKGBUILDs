@@ -55,3 +55,6 @@
 [submodule "pkgs/fava"]
 	path = pkgs/fava
 	url = https://aur.archlinux.org/fava.git
+[submodule "pkgs/python-markdown2"]
+	path = pkgs/python-markdown2
+	url = https://aur.archlinux.org/python-markdown2.git
