@@ -46,3 +46,6 @@
 [submodule "pkgs/emacs-git"]
 	path = pkgs/emacs-git
 	url = https://aur.archlinux.org/emacs-git.git
+[submodule "pkgs/beancount"]
+	path = pkgs/beancount
+	url = https://aur.archlinux.org/beancount.git
