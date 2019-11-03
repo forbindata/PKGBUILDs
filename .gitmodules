@@ -52,3 +52,6 @@
 [submodule "pkgs/python-magic-ahupp"]
 	path = pkgs/python-magic-ahupp
 	url = https://aur.archlinux.org/python-magic-ahupp.git
+[submodule "pkgs/fava"]
+	path = pkgs/fava
+	url = https://aur.archlinux.org/fava.git
