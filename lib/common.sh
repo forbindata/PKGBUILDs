@@ -108,6 +108,8 @@ function get_repo_package_version {
 # $opt__list = ("this-app", "that app")
 #
 # Extra: Yes, it handles spaces nicely!
+# Extra: If you need a multiple-word option that doesn't match a single-letter option, use a dash
+#        as the matching character for that option.
 function parseopts {
   local options=$1; shift
   local longopts=$1; shift
@@ -122,7 +124,7 @@ function parseopts {
 
   # Iterate to set all values false
   for opt in "${longopts_arr[@]}"; do
-    eval "opt_$opt"=false
+    eval "opt_${opt//-/_}"=false
   done
 
   while true; do
@@ -132,7 +134,7 @@ function parseopts {
     local i=0
     for opt in "${longopts_arr[@]}"; do
       if [ "$1" == "-${options:$i:1}" ] || [ "$1" == "--$opt" ]; then
-        eval "opt_$opt"=true
+        eval "opt_${opt//-/_}"=true
         break
       fi
 

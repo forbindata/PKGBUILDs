@@ -5,15 +5,15 @@
 function cmd::build {
   local pkgs=() built_packages=0
 
-  declare opt_all opt_install opt_force opt__list
-  parseopts "aif" "all,install,force" "$@" || exit 1
+  declare opt_all opt_install opt_force opt_no_cleanup opt__list
+  parseopts "aif-" "all,install,force,no-cleanup" "$@" || exit 1
   cmd::build::validates_args "$@"
 
   # Read the packages from parameters or get all from the $pkg_base_path
   if $opt_all; then mapfile -t pkgs < <(list_pkgs); else pkgs=("${opt__list[@]}"); fi
 
   for pkg in "${pkgs[@]}"; do
-    build_pkg "$pkg" "$opt_force" && ((built_packages+=1))
+    build_pkg "$pkg" "$opt_force" "$opt_no_cleanup" && ((built_packages+=1))
   done
 
   if [ $built_packages -le 0 ]; then
@@ -51,6 +51,9 @@ function cmd::build::help {
   echo "                  to build all packages from this git repository."
   echo "  -i, --install   After building all specified packages, install them with $0 install."
   echo "  -f, --force     Force building a package, even if it's been built."
+  echo "  --no-cleanup    Don't cleanup the git repository after building. This is useful when you"
+  echo "                  are building a package that is not directly included on the git repo, but"
+  echo "                  on a submodule and you own it (e.g. an AUR package)."
 }
 
 # Build a single package
@@ -59,6 +62,7 @@ function cmd::build::help {
 function build_pkg {
   local pkg=$1
   local force=$2
+  local no_cleanup=$3
 
   local pkg_path="${pkg_base_path:?}/$pkg"
 
@@ -97,7 +101,8 @@ function build_pkg {
   else
     # When on submodule repositories (non local package), usually the build process leaves some
     # files behind such as caches or PKGBUILD version updates for VCS packages, so we will clean it
-    git_clean_repo "$pkg_path"
+    # up. Unless we say we don't want that.
+    test "$no_cleanup" = "false" && git_clean_repo "$pkg_path"
   fi
 
   # This line helps to separate when there are multiple packages being built
