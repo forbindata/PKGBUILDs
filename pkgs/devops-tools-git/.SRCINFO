@@ -1,6 +1,6 @@
 pkgbase = devops-tools-git
 	pkgdesc = A set of tools for working with server automation.
-	pkgver = 1.0.0.r3.g0e6cd41
+	pkgver = 1.1.0.r2.g044c7a3
 	pkgrel = 1
 	url = https://github.com/kriansa/devops-tools
 	arch = any
