@@ -58,3 +58,6 @@
 [submodule "pkgs/python-markdown2"]
 	path = pkgs/python-markdown2
 	url = https://aur.archlinux.org/python-markdown2.git
+[submodule "pkgs/yed"]
+	path = pkgs/yed
+	url = https://aur.archlinux.org/yed.git
