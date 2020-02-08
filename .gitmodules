@@ -61,6 +61,3 @@
 [submodule "pkgs/yed"]
 	path = pkgs/yed
 	url = https://aur.archlinux.org/yed.git
-[submodule "pkgs/concourse-fly-bin"]
-	path = pkgs/concourse-fly-bin
-	url = https://aur.archlinux.org/concourse-fly-bin.git
